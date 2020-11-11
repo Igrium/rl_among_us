@@ -19,6 +19,23 @@ export module gameServer {
     export const tasks: Record<string, BaseTask> = {};
 
     let inGame: boolean = false;
+    const startGameListeners: Array<() => void> = [];
+
+    /**
+     * Called to start the game.
+     */
+    export function startGame() {
+        if (inGame) {
+            return;
+        }
+        inGame = true;
+        for (let key in players) {
+            players[key].startGame(false, []); // TODO: choose imposter and tasks.
+        }
+        // TODO Implement other game start code.
+        
+        startGameListeners.forEach((listener) => listener());
+    }
 
     /**
      * Called when a player connects to the server.
@@ -63,6 +80,14 @@ export module gameServer {
      */
     export function isInGame(): boolean {
         return inGame;
+    }
+
+    /**
+     * Register a listener for the game start event.
+     * @param listener Listener function.
+     */
+    export function onGameStart(listener: () => void): void {
+        startGameListeners.push(listener);
     }
 
 }

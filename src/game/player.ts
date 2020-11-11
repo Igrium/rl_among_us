@@ -29,7 +29,6 @@ export class Player {
     startGame(isImposter: boolean, tasks: string[]) {
         this.isImposter = isImposter;
         this.isAlive = true;
-
         // Setup tasks
         this.tasks = {};
         for (let task in tasks) {

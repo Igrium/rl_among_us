@@ -6,6 +6,7 @@ import { app } from "./app";
 import { allowedNodeEnvironmentFlags } from "process";
 import { constants } from "./constants";
 import { BaseTask } from "./game/tasks/base_task";
+import { gameUtils } from "./game/gameUtils";
 
 
 export module gameServer {
@@ -28,9 +29,15 @@ export module gameServer {
         if (inGame) {
             return;
         }
+        console.log('Starting game...');
         inGame = true;
+        
+        // Choose imposter.
+        let imposters = gameUtils.chooseImposters(Object.keys(players));
+
         for (let key in players) {
-            players[key].startGame(false, []); // TODO: choose imposter and tasks.
+            let player = players[key];
+            player.startGame(imposters.includes(player.name), []); // TODO: choose tasks.
         }
         // TODO Implement other game start code.
         

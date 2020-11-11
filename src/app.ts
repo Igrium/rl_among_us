@@ -17,6 +17,11 @@ const io: SocketIO.Server = require('socket.io')(http);
  */
 io.on('connect', (socket: SocketIO.Socket) => {
     console.log('Client connecting...');
+
+    if (gameServer.isInGame()) {
+        return app.disconnect(socket, constants.disconnectReasons.GAME_IN_SESSION);
+    }
+
     const query = socket.handshake.query;
     const connectionInfoString = query['connectionInfo'];
     if (connectionInfoString == undefined || connectionInfoString == null) {
@@ -24,20 +29,22 @@ io.on('connect', (socket: SocketIO.Socket) => {
     }
 
     const connectionInfo = JSON.parse(connectionInfoString);
-    console.log(connectionInfo); // TESTING ONLY
     
     if (typeof connectionInfo['connectionType'] === 'string') {
         let connectionType: String = connectionInfo['connectionType'];
 
         if (connectionType === 'player') {
+            // Connect as player
             if (typeof connectionInfo.name === 'string') {
                 return gameServer.connectPlayer(socket, connectionInfo as IPlayerConnectionInfo);
             }
         } else if (connectionType === 'gameField') {
             // Connect as game field computer.
-        } else {
-            return app.disconnect(socket, disconnectReasons.ILLEGAL_ARGS);
-        }
+            if (typeof connectionInfo.id === 'string') {
+                return gameServer.connectFieldComputer(socket, connectionInfo.id);
+            }
+        // If we're down here, we must have illegal args.
+        return app.disconnect(socket, disconnectReasons.ILLEGAL_ARGS);
     }
     return app.disconnect(socket, disconnectReasons.ILLEGAL_ARGS);
 })

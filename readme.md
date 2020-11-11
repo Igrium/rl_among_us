@@ -1,3 +1,4 @@
+# Real Life Among Us
 ## What is this?
 Real Life Among Us is a project spearheaded by Igrium (Sam) and FwappyPotato (Ezra) that attempts to re-create the game *Among Us* in real life using technology. The process is being documented on [YouTube](https://www.youtube.com/watch?v=xZ1ZGXGdHSw&list=PLjn0XvzCcXIAq8WrNV_nOfz9ObkOmrhmr)
 

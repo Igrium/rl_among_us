@@ -48,4 +48,27 @@ export class Player {
             console.log(`${this.name} completed task: ${id}`);
         }
     }
+
+    /**
+     * Called when the client requests to start a task.
+     * @param id Task that's been requested.
+     */
+    requestTask(id: string) {
+        if (gameServer.tasks[id]) {
+            let task = gameServer.tasks[id];
+            task.beginTask(this);
+        }
+    }
+
+    /**
+     * Initialize the player's socket connection.
+     */
+    protected initializeSocket() {
+        // Called when 
+        this.client.on('requestTask', (data: {id: string}) => {
+
+        }) 
+    }
+
+
 }

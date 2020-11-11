@@ -43,11 +43,9 @@ io.on('connect', (socket: SocketIO.Socket) => {
             if (typeof connectionInfo.id === 'string') {
                 return gameServer.connectFieldComputer(socket, connectionInfo.id);
             }
-        // If we're down here, we must have illegal args.
-        return app.disconnect(socket, disconnectReasons.ILLEGAL_ARGS);
     }
     return app.disconnect(socket, disconnectReasons.ILLEGAL_ARGS);
-})
+}})
 
 http.listen(port, () => {
     console.log(`Server listening on port ${port}`);

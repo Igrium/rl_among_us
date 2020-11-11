@@ -5,14 +5,18 @@ import { IPlayerConnectionInfo } from "./io/playerConnectionInfo";
 import { app } from "./app";
 import { allowedNodeEnvironmentFlags } from "process";
 import { constants } from "./constants";
+import { BaseTask } from "./game/tasks/base_task";
 
 
 export module gameServer {
-    /**All the players connected to the server. <Name, Player> */
+    /** All the players connected to the server. <Name, Player> */
     export const players: Record<string, Player> = {};
 
-    /**All the field computers connected to the server. <Name, Socket connection> */
-    export const fieldComputers: Record<string, SocketIO.Socket> = {};
+    /** All the field computers connected to the server. <Name, Field Computer Interface> */
+    export const fieldComputers: Record<string, FieldComputerInterface> = {};
+    
+    /** A library of all the tasks in the map. <ID, Task object> */
+    export const tasks: Record<string, BaseTask> = {};
 
     let inGame: boolean = false;
 
@@ -39,9 +43,11 @@ export module gameServer {
      * Connect a game field computer.
      * @param socket Socket connection to field computer.
      * @param id Field computer ID.
+     * @param interfaceClass The class of the field computer interface to use.
      */
-    export function connectFieldComputer(socket: SocketIO.Socket, id: string): void {
-        gameServer.fieldComputers[id] = socket;
+    export function connectFieldComputer(socket: SocketIO.Socket, id: string, interfaceClass?: string): void {
+        // TODO: implement use of multiple classes.
+        gameServer.fieldComputers[id] = new FieldComputerInterface(socket, id);
         console.log(`Game field computer connected: ${id}`);
     }
 

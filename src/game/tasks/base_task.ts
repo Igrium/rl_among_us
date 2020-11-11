@@ -38,13 +38,12 @@ export abstract class BaseTask {
      * This is called BEFORE the client is sent information about the task.
      * Only use to setup animations.
      * @param player Player who's performing the task.
-     * @param callback Called when the task is complete.
      */
-    beginTask(player: Player, callback: (complete: boolean) => void): void {
+    beginTask(player: Player): void {
         // Callback is called once client confirms it has started the task.
         player.client.emit('doTask', this.id, (data: {started: boolean}) => {
             if (data.started) {
-                this.doTask(player, callback);
+                this.doTask(player);
             }
         });
 
@@ -69,9 +68,8 @@ export abstract class BaseTask {
      * This function is only called once the client has confirmed that it has started the task,
      * meaning that you can expect to be able to communicate with the task's client counterpart.
      * @param player Player who's performing the task.
-     * @param callback Called when the task is complete.
      */
-    abstract doTask(player: Player, callback: (complete: boolean) => void): void;
+    abstract doTask(player: Player): void;
 
     /**
      * Called when a player finishes a task but hasn't QR-Code verified yet.

@@ -20,7 +20,15 @@ export module gameServer {
     export const tasks: Record<string, BaseTask> = {};
 
     let inGame: boolean = false;
+
+    /**
+     * A value from 0-1 denoting the percent of the tasks which have been completed.
+     */
+    let taskBar: number = 0;
+
+    // Listeners
     const startGameListeners: Array<() => void> = [];
+    const updateTaskBarListeners: Array<(taskBar: number) => void> = [];
 
     /**
      * Called to start the game.
@@ -35,13 +43,39 @@ export module gameServer {
         // Choose imposter.
         let imposters = gameUtils.chooseImposters(Object.keys(players));
 
+        // Generate roster object.
+        let roster: Record<string, boolean> = {};
         for (let key in players) {
             let player = players[key];
-            player.startGame(imposters.includes(player.name), []); // TODO: choose tasks.
+            roster[player.name] = imposters.includes(player.name);
         }
+
+        // Initialize players and tell clients to start.
+        for (let key in players) {
+            let player = players[key];
+            player.startGame(roster[player.name], []); // TODO: choose tasks.
+            player.client.emit('startGame', {roster: roster, gameInfo: {}, mapInfo: {}}) // TODO: implement gameInfo and mapInfo.
+            player.updateTasks();
+        }
+
+        
+
         // TODO Implement other game start code.
         
         startGameListeners.forEach((listener) => listener());
+    }
+
+    /**
+     * Called when the game ends.
+     * @param impostersWin Did the imposters win?
+     */
+    export function endGame(impostersWin: boolean) {
+        for (let key in players) {
+            let player = players[key];
+            player.endGame(impostersWin);
+            player.client.emit('endGame', {impostersWin: impostersWin});
+        }
+        
     }
 
     /**
@@ -79,7 +113,33 @@ export module gameServer {
      * Notifies the server that someone has completed a task and the task bar must be recalculated.
      */
     export function recaculateTaskBar(): void {
-        // TODO: Implement this
+        // The task bar should be the number of tasks players have done devided by the total number of tasks.
+        let oldValue = taskBar;
+        let num = 0;
+        let denom = 0;
+
+        for (let key in players) {
+            let player = players[key];
+            num += player.countTasks();
+            denom += Object.keys(player.tasks).length;
+        }
+        taskBar = num / denom;
+        
+        if (oldValue != taskBar) {
+            updateTaskBar();
+        }
+    }
+
+    /**
+     * Update the task bar on the clients.
+     */
+    function updateTaskBar() {
+        for (let key in players) {
+            let player = players[key];
+            player.client.emit('updateTaskBar', taskBar);
+        }
+
+        updateTaskBarListeners.forEach((listener) => listener(taskBar));
     }
     
     /**
@@ -95,6 +155,17 @@ export module gameServer {
      */
     export function onGameStart(listener: () => void): void {
         startGameListeners.push(listener);
+    }
+    
+    /**
+     * Register a listener for the update task bar event.
+     * 
+     * This event fires at the beginning of the game, when a client completes a task,
+     * and when updateTaskBar() is called.
+     * @param listener Listener function.
+     */
+    export function onUpdateTaskBar(listener: (taskBar: number) => void): void {
+        updateTaskBarListeners.push(listener);
     }
 
 }

@@ -1,6 +1,10 @@
 import { Socket } from "socket.io";
 import { gameServer } from "../gameServer";
 
+/**
+ * The server representation of a player.
+ * While not in a game, functionallity further than reading the name and client may NOT be used.
+ */
 export class Player {
     /**The username of the player. */
     readonly name: string;
@@ -37,6 +41,14 @@ export class Player {
     }
 
     /**
+     * Called when the game ends.
+     * @param impostersWin Did the imposters win?
+     */
+    endGame(impostersWin: boolean) {
+        
+    }
+
+    /**
      * Called when this player completes a task.
      * @param id ID of the task that's been completed.
      */
@@ -45,7 +57,21 @@ export class Player {
             this.tasks.id = true;
             gameServer.recaculateTaskBar();
             console.log(`${this.name} completed task: ${id}`);
+            this.updateTasks();
         }
+    }
+
+    /**
+     * Count the number of tasks that this player has completed.
+     */
+    countTasks(): number {
+        let completed = 0;
+        for (let key in this.tasks) {
+            if (this.tasks[key]) {
+                completed++;
+            }
+        }
+        return completed;
     }
 
     /**
@@ -59,6 +85,14 @@ export class Player {
         }
     }
 
+    /**
+     * Send the current version of the task list to the client.
+     */
+    updateTasks() {
+        this.client.emit('updateTasks', this.tasks);
+    }
+
+    
     /**
      * Initialize the player's socket connection.
      */

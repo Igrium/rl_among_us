@@ -98,7 +98,7 @@ export class Player {
      */
     protected initializeSocket() {
         // Called when 
-        this.client.on('requestTask', (data: {id: string}) => {
+        this.client.on('requestTask', (id) => {
 
         }) 
     }

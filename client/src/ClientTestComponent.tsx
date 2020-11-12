@@ -3,9 +3,12 @@ import socketIOClient from 'socket.io-client';
 import { stringify } from "querystring";
 
 const URL = `http://localhost:5000`
+
+/**
+ * A very poorly written component testing the initial socket connection to the server.
+ * Don't use any of this code. It's really bad.
+ */
 class ClientTestComponent extends Component {
-
-
     render() {
         console.log(`Connecting to ${URL}...`)
         var connectionInfo = {connectionType: "player", name: "Igrium"};

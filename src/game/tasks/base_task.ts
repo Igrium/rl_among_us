@@ -49,17 +49,19 @@ export abstract class BaseTask {
 
         player.client.once('taskFinished', (data: {aborted: boolean}) => {
             this.onTaskFinished(player, data.aborted);
-            if (!this.requireConfirmationScan && !data.aborted) {
-                this.onTaskComplete(player);
-            }
+            if (!data.aborted) {
+                if (!this.requireConfirmationScan) {
+                    this.onTaskComplete(player);
+                } else {
+                    // Listen for verification scan.
+                    player.client.once('taskComplete', (data: {canceled: boolean}) => {
+                        if (!data.canceled) {
+                            this.onTaskComplete(player);
+                        }
+                    })
+                }
+            }      
         })
-
-        // We only want to listen for 'taskComplete' if we're requireing QR-Code confirmation.
-        if (this.requireConfirmationScan) {
-            player.client.once('taskComplete', (data: {canceled: boolean}) => {
-                this.onTaskComplete(player);
-            })
-        }
     }
 
     /**

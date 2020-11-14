@@ -97,9 +97,10 @@ export class Player {
      * Initialize the player's socket connection.
      */
     protected initializeSocket() {
-        // Called when 
+        // Called when the client wants to do a task.
         this.client.on('requestTask', (id) => {
-
+            let task = gameServer.tasks[id];
+            task.beginTask(this);
         }) 
     }
 

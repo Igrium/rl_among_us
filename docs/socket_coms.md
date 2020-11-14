@@ -12,13 +12,13 @@ This is sent to a client if the server needs to disconnect it for any reason, fo
 
 ---
 
-`startGame [data: {roster: object, gameInfo: object, mapInfo: object}]`
+`startGame [data: {roster: object, gameConfig: object, mapInfo: object}]`
 
 This is sent to all clients by the server when the game starts. It contains a data object with the following information:
 
 `roster`: A dictionary with all the player names as keys with whether they're an imposter or not as values.
 
-`gameInfo`: The complete game configuration json file.
+`gameConfig`: The complete game configuration.
 
 `mapInfo`: The complete map information json file.
 

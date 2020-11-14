@@ -1,0 +1,21 @@
+{
+    "mapImage": "/assets/map.png",
+    "tasks": [
+        {
+            "id": "task1",
+            "classID": "basic",
+            "coords": [23, 52],
+            "icon": "/assets/icon.png",
+            "requireConfirmationScan": true,
+            "params": {}
+        },
+        {
+            "id": "task2",
+            "classID": "basic",
+            "coords": [23, 23],
+            "icon": "/assets/icon.png",
+            "requireConfirmationScan": false,
+            "params": {}
+        }
+    ]
+}

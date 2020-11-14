@@ -76,7 +76,7 @@ export abstract class BaseTask {
      * @param player Player who aborted the task.
      * @param aborted If the player aborted the task.
      */
-    abstract onTaskFinished(player: Player, aborted: boolean): void;
+    onTaskFinished(player: Player, aborted: boolean): void {};
 
     /**
      * Called when a player completes a task and QR-Code verifies.
@@ -85,4 +85,9 @@ export abstract class BaseTask {
     onTaskComplete(player: Player): void {
         player.completeTask(this.id);
     }
+
+    /**
+     * Called when the game begins (or begins again).
+     */
+    onBeginGame(): void {}
 }

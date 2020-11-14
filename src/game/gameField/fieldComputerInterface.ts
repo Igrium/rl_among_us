@@ -2,7 +2,7 @@
  * Interface class for game field computers.
  * May be extended to provide non task-related functionallity.
  */
-class FieldComputerInterface {
+export class FieldComputerInterface {
     /**
      * Socket connection to game field computer.
      */

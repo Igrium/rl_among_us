@@ -3,10 +3,14 @@ import { IConnectionInfo } from "./io/connectionInfo";
 import { Player } from "./game/player";
 import { IPlayerConnectionInfo } from "./io/playerConnectionInfo";
 import { app } from "./app";
-import { allowedNodeEnvironmentFlags } from "process";
+import { allowedNodeEnvironmentFlags, mainModule } from "process";
 import { constants } from "./constants";
 import { BaseTask } from "./game/tasks/base_task";
 import { gameUtils } from "./game/gameUtils";
+import { taskManifest } from "./game/tasks/taskManifest";
+import { FieldComputerInterface } from "./game/gameField/fieldComputerInterface";
+
+const config = require('config');
 
 
 export module gameServer {
@@ -16,8 +20,11 @@ export module gameServer {
     /** All the field computers connected to the server. <Name, Field Computer Interface> */
     export const fieldComputers: Record<string, FieldComputerInterface> = {};
     
+    
+    export const gameConfig = config.get('game');
+    export const mapFile = gameUtils.loadMapFile(gameConfig.map);
     /** A library of all the tasks in the map. <ID, Task object> */
-    export const tasks: Record<string, BaseTask> = {};
+    export const tasks: Record<string, BaseTask> = taskManifest.loadTasks(mapFile.tasks);
 
     let inGame: boolean = false;
 
@@ -30,6 +37,7 @@ export module gameServer {
     const startGameListeners: Array<() => void> = [];
     const updateTaskBarListeners: Array<(taskBar: number) => void> = [];
 
+
     /**
      * Called to start the game.
      */
@@ -39,6 +47,8 @@ export module gameServer {
         }
         console.log('Starting game...');
         inGame = true;
+        taskBar = 0;
+        
         
         // Choose imposter.
         let imposters = gameUtils.chooseImposters(Object.keys(players));
@@ -54,11 +64,10 @@ export module gameServer {
         for (let key in players) {
             let player = players[key];
             player.startGame(roster[player.name], []); // TODO: choose tasks.
-            player.client.emit('startGame', {roster: roster, gameInfo: {}, mapInfo: {}}) // TODO: implement gameInfo and mapInfo.
+            player.client.emit('startGame', {roster: roster, gameConfig: gameConfig, mapInfo: mapFile}) // TODO: implement gameInfo and mapInfo.
             player.updateTasks();
         }
-
-        
+        updateTaskBar();
 
         // TODO Implement other game start code.
         

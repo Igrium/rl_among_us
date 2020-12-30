@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { gameServer } from "../gameServer";
 
+
 /**
  * The server representation of a player.
  * While not in a game, functionallity further than reading the name and client may NOT be used.

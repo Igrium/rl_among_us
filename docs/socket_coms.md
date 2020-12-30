@@ -12,6 +12,14 @@ This is sent to a client if the server needs to disconnect it for any reason, fo
 
 ---
 
+`updateRoster [roster: string[]]`
+
+Used while the server is in the waiting room, this is sent periodically to all clients with the current list of players.
+
+`roster`: A list with all the player names.
+
+---
+
 `startGame [data: {roster: object, gameConfig: object, mapInfo: object}]`
 
 This is sent to all clients by the server when the game starts. It contains a data object with the following information:

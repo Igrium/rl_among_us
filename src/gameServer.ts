@@ -9,6 +9,7 @@ import { BaseTask } from "./game/tasks/base_task";
 import { gameUtils } from "./game/gameUtils";
 import { taskManifest } from "./game/tasks/taskManifest";
 import { FieldComputerInterface } from "./game/gameField/fieldComputerInterface";
+import { waitingRoom } from "./waitingRoom";
 
 const config = require('config');
 
@@ -103,6 +104,8 @@ export module gameServer {
         players[name] = player;
 
         console.log(`Player connected: ${name}`);
+
+        waitingRoom.updateRoster();
         return player;
     }
 

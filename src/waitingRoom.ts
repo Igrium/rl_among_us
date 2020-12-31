@@ -7,9 +7,11 @@ export module waitingRoom {
      * Send the current list of players to all clients.
      */
     export function updateRoster() {
-        const players = Object.keys(gameServer.players);
-        players.forEach(name => {
-            gameServer.players[name].client.emit('updateRoster', players);
+        const players = Object.keys(gameServer.players).map((name) => {
+            return {name: name, color: gameServer.players[name].color}
+        });
+        players.forEach(player => {
+            gameServer.players[player.name].client.emit('updateRoster', players);
         });
     }
 }

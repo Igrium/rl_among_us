@@ -15,6 +15,7 @@ const config = require('config');
 
 
 export module gameServer {
+
     /** All the players connected to the server. <Name, Player> */
     export const players: Record<string, Player> = {};
 
@@ -102,7 +103,6 @@ export module gameServer {
         }
         let player: Player = new Player(name, client);
         players[name] = player;
-
         console.log(`Player connected: ${name}`);
 
         waitingRoom.updateRoster();

@@ -2,7 +2,7 @@ import React, { useEffect, Component } from 'react';
 import './App.css';
 import LoginScreen from './components/LoginScreen';
 import ConnectionHandler, {IConnectionInfo} from './logic/ConnectionHandler'
-import PlayerList from './components/PlayerList';
+import WaitingRoom from './components/WaitingRoom';
 
 interface IProps {}
 interface IState {
@@ -49,7 +49,7 @@ class App extends Component<IProps, IState> {
             // Lobby screen
             return (
                 <div className="app">
-                    <PlayerList />
+                    <WaitingRoom />
                 </div>
             )
         } else {

@@ -12,11 +12,11 @@ This is sent to a client if the server needs to disconnect it for any reason, fo
 
 ---
 
-`updateRoster [roster: string[]]`
+`updateRoster [data: {players: {name: string, color: string}[]}]`
 
 Used while the server is in the waiting room, this is sent periodically to all clients with the current list of players.
 
-`roster`: A list with all the player names.
+`players`: A list with all the player names and colors.
 
 ---
 
@@ -79,6 +79,12 @@ Game field computers:
 }
 ```
 Obviously, replace "player_name" and "computer_id" with the player name and computer id.
+
+---
+
+`setColor [color: string]`
+
+Tell the server to set the player's color. Color can only be set in the waiting room.
 
 ---
 

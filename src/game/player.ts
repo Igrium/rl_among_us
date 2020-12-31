@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import { gameServer } from "../gameServer";
+import { waitingRoom } from "../waitingRoom";
 
 
 /**
@@ -15,6 +16,7 @@ export class Player {
     
     isImposter: boolean = false;
     isAlive: boolean = true;
+    color: string = '#000000'
     
     /**
      * This player's task list <Task ID, Is Completed?>
@@ -24,6 +26,7 @@ export class Player {
     constructor(name: string, client: SocketIO.Socket) {
         this.name = name;
         this.client = client;
+        this.initializeSocket();
     }
 
     /**
@@ -93,17 +96,32 @@ export class Player {
         this.client.emit('updateTasks', this.tasks);
     }
 
+    setColor(color: string) {
+        if (!gameServer.isInGame()) {
+            this.color = color;
+            waitingRoom.updateRoster();
+        }
+    }
     
     /**
      * Initialize the player's socket connection.
      */
     protected initializeSocket() {
         // Called when the client wants to do a task.
-        this.client.on('requestTask', (id) => {
-            let task = gameServer.tasks[id];
-            task.beginTask(this);
-        }) 
+        if (gameServer.isInGame()) {
+            this.client.on('requestTask', (id) => {
+                let task = gameServer.tasks[id];
+                task.beginTask(this);
+            }) 
+        }
+        
+
+        this.client.on('setColor', (color: string) => {
+            if (!gameServer.isInGame()) {
+                console.log(`Set ${this.name}'s color to ${color}.`);
+                this.setColor(color);
+            }
+            
+        })
     }
-
-
 }

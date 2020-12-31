@@ -20,11 +20,11 @@ Used while the server is in the waiting room, this is sent periodically to all c
 
 ---
 
-`startGame [data: {roster: object, gameConfig: object, mapInfo: object}]`
+`startGame [data: {roster: ILightPlayer[], gameConfig: object, mapInfo: IMapFile}]`
 
 This is sent to all clients by the server when the game starts. It contains a data object with the following information:
 
-`roster`: A dictionary with all the player names as keys with whether they're an imposter or not as values.
+`roster`: A list of ILightPlayer objects listing all the players on the server.
 
 `gameConfig`: The complete game configuration.
 
@@ -108,3 +108,10 @@ Additionally, this message should also be sent if the client aborts the task for
 `taskComplete [data: {canceled: boolean}]`
 
 This message lets the server know that the client successfully QR code verified the task it was doing. Unless `canceled` = `true`. Then it means that the QR code verification failed.
+
+---
+`startGame` 
+
+(TESTING ONLY)
+
+This arguement-less command requests that the server start the game. It is used for testing games without the emergency button connected.

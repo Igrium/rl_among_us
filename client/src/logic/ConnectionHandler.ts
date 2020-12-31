@@ -32,7 +32,7 @@ class ConnectionHandler {
     }
 
     // EVENTS
-    emitter = new events.EventEmitter();
+    private emitter = new events.EventEmitter();
 
     /**
      * Called when the server tells the client that it's going to be disconnected.

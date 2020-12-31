@@ -10,6 +10,7 @@ import { gameUtils } from "./game/gameUtils";
 import { taskManifest } from "./game/tasks/taskManifest";
 import { FieldComputerInterface } from "./game/gameField/fieldComputerInterface";
 import { waitingRoom } from "./waitingRoom";
+import ILightPlayer from "../common/ILightPlayer";
 
 const config = require('config');
 
@@ -56,17 +57,26 @@ export module gameServer {
         let imposters = gameUtils.chooseImposters(Object.keys(players));
 
         // Generate roster object.
-        let roster: Record<string, boolean> = {};
+        let roster: Record<string, ILightPlayer> = {};
         for (let key in players) {
             let player = players[key];
-            roster[player.name] = imposters.includes(player.name);
+            roster[player.name] = {
+                name: player.name,
+                color: player.color,
+                isImposter: imposters.includes(player.name),
+                isAlive: true
+            }        
         }
 
         // Initialize players and tell clients to start.
         for (let key in players) {
             let player = players[key];
-            player.startGame(roster[player.name], []); // TODO: choose tasks.
-            player.client.emit('startGame', {roster: roster, gameConfig: gameConfig, mapInfo: mapFile}) // TODO: implement gameInfo and mapInfo.
+            player.startGame(roster[player.name].isImposter, []); // TODO: choose tasks.
+            player.client.emit('startGame', {
+                roster: Object.values(roster),
+                gameConfig: gameConfig,
+                mapInfo: mapFile
+            }) // TODO: implement gameInfo and mapInfo.
             player.updateTasks();
         }
         updateTaskBar();

@@ -37,6 +37,11 @@ export class PlayerList extends Component<IProps, IState> {
         console.log(`Set local color to ${color.hex}`);
     }
 
+    handleStartGame = (event: React.MouseEvent) => {
+        event.preventDefault();
+        ConnectionHandler.activeConnection.io.emit('startGame');
+    }
+
     render() {
         const { playerList } = this.state;
         const listItems = playerList.map(
@@ -48,6 +53,7 @@ export class PlayerList extends Component<IProps, IState> {
                     {listItems}
                 </ul>
                 <CirclePicker onChange={this.handleColorChange}/>
+                <button onClick={this.handleStartGame}>Start Game</button>
             </div>
         )
     }

@@ -121,7 +121,12 @@ export class Player {
                 console.log(`Set ${this.name}'s color to ${color}.`);
                 this.setColor(color);
             }
-            
+        })
+
+        this.client.on('startGame', () => {
+            if (!gameServer.isInGame()) {
+                gameServer.startGame();
+            }
         })
     }
 }

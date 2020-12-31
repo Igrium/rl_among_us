@@ -1,4 +1,4 @@
-import { ITask } from "../mapFile";
+import { ITask } from "../../../common/IMapFile";
 import { BaseTask } from "./base_task";
 import { BasicTask } from "./basicTask";
 

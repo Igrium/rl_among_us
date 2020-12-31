@@ -1,4 +1,4 @@
-import { IMapFile } from "./mapFile";
+import { IMapFile } from "../../common/IMapFile"
 import { join } from "path";
 import { readFileSync } from "fs";
 

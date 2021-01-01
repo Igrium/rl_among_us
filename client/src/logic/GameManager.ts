@@ -58,11 +58,6 @@ export class GameManager {
      */
     finishTask(taskID: string, aborted: boolean) {
         this.connectionHandler.io.emit('taskFinished', {'aborted': aborted});
-
-        // TEMPORARY: remove once QR-code scanning is implemented.
-        if (!aborted) {
-            setTimeout(() => {this.completeTask(false)}, 1000);
-        }
     }
 
     /**

@@ -57,12 +57,13 @@ export class Player {
 
     /**
      * Called when this player completes their current task.
+     * @param verified Whether the task was verified complete.
      */
-    completeTask() {
+    completeTask(verified: boolean) {
         if (!this.currentTask) return;
         const id = this.currentTask.id;
 
-        if (!(this.isImposter || this.tasks[id])) {
+        if (verified && !(this.isImposter || this.tasks[id])) {
             console.log(`${this.name} completed task: ${id}`);
             this.tasks[id] = true;
             gameServer.recaculateTaskBar();

@@ -2,9 +2,11 @@ import React, { Component } from 'react'
 import { GameManager } from '../../logic/GameManager'
 import PlayerList from '../testing/PlayerList'
 import TestTaskDisplay from '../testing/TestTaskDisplay'
+import TaskList from './tasks/TaskList'
 
 interface IProps {
-    gameManager: GameManager
+    gameManager: GameManager,
+    onRequestTask: () => void
 }
 
 interface IState {
@@ -32,8 +34,8 @@ export class Gameplay extends Component<IProps, IState> {
         })
     }
 
-    handleTaskClicked = (taskID: string) => {
-        this.props.gameManager.requestTask(taskID);
+    handleRequestTask = () => {
+        this.props.onRequestTask();
     }
 
     render() {
@@ -42,7 +44,8 @@ export class Gameplay extends Component<IProps, IState> {
                 <h1>Gameplay Screen</h1>
                 <PlayerList players={this.props.gameManager.players} />
                 <p>Task completion: {this.state.taskBar * 100}%</p>
-                <TestTaskDisplay tasks={this.state.tasks} onTaskClicked={this.handleTaskClicked} />
+                <TaskList tasks={this.state.tasks} />
+                <button onClick={this.handleRequestTask}>Scan Task</button>
             </div>
         )
     }

@@ -53,13 +53,11 @@ export abstract class BaseTask {
             this.onTaskFinished(player, data.aborted);
             if (!data.aborted) {
                 if (!this.requireConfirmationScan) {
-                    this.onTaskComplete(player);
+                    this.onTaskComplete(player, true);
                 } else {
                     // Listen for verification scan.
                     player.client.once('taskComplete', (data: {canceled: boolean}) => {
-                        if (!data.canceled) {
-                            this.onTaskComplete(player);
-                        }
+                        this.onTaskComplete(player, !data.canceled);
                     })
                 }
             }      
@@ -85,9 +83,10 @@ export abstract class BaseTask {
     /**
      * Called when a player completes a task and QR-Code verifies.
      * @param player Player who completed the task.
+     * @param verified Whether the task was properly QR-Code verified.
      */
-    onTaskComplete(player: Player): void {
-        player.completeTask();
+    onTaskComplete(player: Player, verified: boolean): void {
+        player.completeTask(verified);
     }
 
     /**

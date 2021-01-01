@@ -142,11 +142,15 @@ export module gameServer {
 
         for (let key in players) {
             let player = players[key];
-            num += player.countTasks();
-            denom += Object.keys(player.tasks).length;
+            if (!player.isImposter) {
+                num += player.countTasks();
+                denom += Object.keys(player.tasks).length;
+            }
         }
         taskBar = num / denom;
         
+        console.log(`Task completion is now at ${taskBar * 100}%`)
+
         if (oldValue != taskBar) {
             updateTaskBar();
         }

@@ -25,6 +25,8 @@ export class GameManager {
      */
     tasks: Record<string, boolean> = {};
 
+    taskBar = 0;
+
     constructor(connectionHandler: ConnectionHandler) {
         this.connectionHandler = connectionHandler;
         this.initializeSocket()
@@ -95,10 +97,16 @@ export class GameManager {
         this.em.emit('updateTasks', this.tasks);
     }
 
+    protected updateTaskBar = (value: number) => {
+        this.taskBar = value;
+        this.em.emit('updateTaskBar', value);
+    }
+
     protected initializeSocket() {
         this.connectionHandler.io.on('startGame', this.startGame);
         this.connectionHandler.io.on('updateTasks', this.updateTasks);
         this.connectionHandler.io.on('doTask', this.doTask);
+        this.connectionHandler.io.on('updateTaskBar', this.updateTaskBar);
     }
 
     // EVENTS
@@ -124,5 +132,13 @@ export class GameManager {
      */
     onUpdateTasks(listener: (tasks: Record<string, boolean>) => void) {
         this.em.on('updateTasks', listener);
+    }
+
+    /**
+     * Called when the client recieves an update to the value in the task bar.
+     * @param listener Event listener.
+     */
+    onUpdateTaskBar(listener: (value: number) => void) {
+        this.em.on('updateTaskBar', listener);
     }
 }

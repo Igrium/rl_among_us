@@ -8,7 +8,8 @@ interface IProps {
 }
 
 interface IState {
-    tasks: Record<string, boolean>
+    tasks: Record<string, boolean>,
+    taskBar: number
 }
 
 export class Gameplay extends Component<IProps, IState> {
@@ -16,13 +17,18 @@ export class Gameplay extends Component<IProps, IState> {
         super(props)
     
         this.state = {
-            tasks: props.gameManager.tasks
+            tasks: props.gameManager.tasks,
+            taskBar: 0
         }
     }
     
     componentDidMount() {
         this.props.gameManager.onUpdateTasks((tasks) => {
             this.setState({ tasks: tasks })
+        })
+
+        this.props.gameManager.onUpdateTaskBar((value) => {
+            this.setState({ taskBar: value });
         })
     }
 
@@ -35,6 +41,7 @@ export class Gameplay extends Component<IProps, IState> {
             <div>
                 <h1>Gameplay Screen</h1>
                 <PlayerList players={this.props.gameManager.players} />
+                <p>Task completion: {this.state.taskBar * 100}%</p>
                 <TestTaskDisplay tasks={this.state.tasks} onTaskClicked={this.handleTaskClicked} />
             </div>
         )

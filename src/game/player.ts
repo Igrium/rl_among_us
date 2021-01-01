@@ -63,9 +63,9 @@ export class Player {
         const id = this.currentTask.id;
 
         if (!(this.isImposter || this.tasks[id])) {
-            this.tasks.id = true;
-            gameServer.recaculateTaskBar();
             console.log(`${this.name} completed task: ${id}`);
+            this.tasks[id] = true;
+            gameServer.recaculateTaskBar();
             this.updateTasks();
         }
         this.currentTask = undefined;
@@ -76,11 +76,11 @@ export class Player {
      */
     countTasks(): number {
         let completed = 0;
-        for (let key in this.tasks) {
+        Object.keys(this.tasks).forEach((key) => {
             if (this.tasks[key]) {
                 completed++;
             }
-        }
+        })
         return completed;
     }
 

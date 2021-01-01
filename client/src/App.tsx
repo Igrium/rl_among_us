@@ -1,40 +1,81 @@
 import React, { useEffect, Component } from 'react';
-import logo from './logo.svg';
-import socketIOClient from 'socket.io-client';
 import './App.css';
-import ClientTestComponent from './ClientTestComponent';
+import LoginScreen from './components/LoginScreen';
+import ConnectionHandler, {IConnectionInfo} from './logic/ConnectionHandler'
+import WaitingRoom from './components/WaitingRoom';
+import GameScreen from './components/GameScreen';
+import { GameManager } from './logic/GameManager';
 
+interface IProps {}
+interface IState {
+    isConnected: boolean
+    isInGame: boolean
+}
 
+class App extends Component<IProps, IState> {
 
-function App() {
+    gameManager?: GameManager;
 
-  useEffect(() => {
-    const socket = socketIOClient.io('http://localhost:5000', {transports: ['websocket']});
-    socket.on('disconnectWarning', (message: any, data: any) => {
-      console.log('test');
-    })
-  })
+    constructor(props: IProps) {
+        super(props)
+        this.state = {
+            isConnected: false,
+            isInGame: false
+        }
+    }
+    
+    protected initializeListeners() {
+        if (this.gameManager == undefined) return;
+        this.gameManager.onGameStart(() => {
+            this.setState({ isInGame: true });
+        })
+    }
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      <ClientTestComponent />
-    </div>
+    handleSubmit = (connectionInfo: any) => {
+        ConnectionHandler.activeConnection = new ConnectionHandler({
+            url: connectionInfo.url,
+            playerName: connectionInfo.playerName
+        }, () => {
+            console.log(`Connected to ${connectionInfo.url} as ${connectionInfo.playerName}`);
+            const activeConnection = ConnectionHandler.activeConnection;
+            this.gameManager = new GameManager(activeConnection);
+            this.initializeListeners();
 
-  );
+            this.setState({ isConnected: true });
+            activeConnection.io.on('disconnect', () => {
+                this.setState({ isConnected: false, isInGame: false });
+            })
+        })
+    }
+
+    render() {
+        if (!this.state.isConnected) {
+            // Log in screen
+            return (
+                <div className="App">
+                    <LoginScreen onSubmit={this.handleSubmit} />
+                </div>
+            )
+        } else if (!this.state.isInGame) {
+            // Lobby screen
+            return (
+                <div className="app">
+                    <WaitingRoom />
+                </div>
+            )
+        } else {
+            // Game screen
+            if (this.gameManager == undefined) {
+                alert("App is connected without a game manager. This should not be able to happen.")
+                return <div className="app"></div>;
+            }
+            else return (
+                <div className="app">
+                <GameScreen gameManager={this.gameManager}/>
+                </div>
+            )
+        }
+    }
 }
 
 export default App;

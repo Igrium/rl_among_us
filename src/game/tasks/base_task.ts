@@ -40,6 +40,7 @@ export abstract class BaseTask {
      * @param player Player who's performing the task.
      */
     beginTask(player: Player): void {
+
         // Callback is called once client confirms it has started the task.
         player.client.emit('doTask', this.id, (data: {started: boolean}) => {
             if (data.started) {
@@ -48,6 +49,7 @@ export abstract class BaseTask {
         });
 
         player.client.once('taskFinished', (data: {aborted: boolean}) => {
+            console.log(`${player.name} finished task "${this.id}"`);
             this.onTaskFinished(player, data.aborted);
             if (!data.aborted) {
                 if (!this.requireConfirmationScan) {
@@ -85,7 +87,7 @@ export abstract class BaseTask {
      * @param player Player who completed the task.
      */
     onTaskComplete(player: Player): void {
-        player.completeTask(this.id);
+        player.completeTask();
     }
 
     /**

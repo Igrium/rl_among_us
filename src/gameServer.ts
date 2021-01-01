@@ -9,11 +9,14 @@ import { BaseTask } from "./game/tasks/base_task";
 import { gameUtils } from "./game/gameUtils";
 import { taskManifest } from "./game/tasks/taskManifest";
 import { FieldComputerInterface } from "./game/gameField/fieldComputerInterface";
+import { waitingRoom } from "./waitingRoom";
+import ILightPlayer from "../common/ILightPlayer";
 
 const config = require('config');
 
 
 export module gameServer {
+
     /** All the players connected to the server. <Name, Player> */
     export const players: Record<string, Player> = {};
 
@@ -48,23 +51,32 @@ export module gameServer {
         console.log('Starting game...');
         inGame = true;
         taskBar = 0;
-        
-        
+                
         // Choose imposter.
         let imposters = gameUtils.chooseImposters(Object.keys(players));
 
         // Generate roster object.
-        let roster: Record<string, boolean> = {};
+        let roster: Record<string, ILightPlayer> = {};
         for (let key in players) {
             let player = players[key];
-            roster[player.name] = imposters.includes(player.name);
+            roster[player.name] = {
+                name: player.name,
+                color: player.color,
+                isImposter: imposters.includes(player.name),
+                isAlive: true
+            }        
         }
 
         // Initialize players and tell clients to start.
         for (let key in players) {
             let player = players[key];
-            player.startGame(roster[player.name], []); // TODO: choose tasks.
-            player.client.emit('startGame', {roster: roster, gameConfig: gameConfig, mapInfo: mapFile}) // TODO: implement gameInfo and mapInfo.
+            let tasks = gameUtils.assignTasks(mapFile.tasks, 5);
+            player.startGame(roster[player.name].isImposter, tasks); // TODO: choose tasks.
+            player.client.emit('startGame', {
+                roster: Object.values(roster),
+                gameConfig: gameConfig,
+                mapInfo: mapFile
+            }) // TODO: implement gameInfo and mapInfo.
             player.updateTasks();
         }
         updateTaskBar();
@@ -101,8 +113,9 @@ export module gameServer {
         }
         let player: Player = new Player(name, client);
         players[name] = player;
-
         console.log(`Player connected: ${name}`);
+
+        waitingRoom.updateRoster();
         return player;
     }
 
@@ -129,11 +142,15 @@ export module gameServer {
 
         for (let key in players) {
             let player = players[key];
-            num += player.countTasks();
-            denom += Object.keys(player.tasks).length;
+            if (!player.isImposter) {
+                num += player.countTasks();
+                denom += Object.keys(player.tasks).length;
+            }
         }
         taskBar = num / denom;
         
+        console.log(`Task completion is now at ${taskBar * 100}%`)
+
         if (oldValue != taskBar) {
             updateTaskBar();
         }

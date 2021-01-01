@@ -12,11 +12,19 @@ This is sent to a client if the server needs to disconnect it for any reason, fo
 
 ---
 
-`startGame [data: {roster: object, gameConfig: object, mapInfo: object}]`
+`updateRoster [data: {players: {name: string, color: string}[]}]`
+
+Used while the server is in the waiting room, this is sent periodically to all clients with the current list of players.
+
+`players`: A list with all the player names and colors.
+
+---
+
+`startGame [data: {roster: ILightPlayer[], gameConfig: object, mapInfo: IMapFile}]`
 
 This is sent to all clients by the server when the game starts. It contains a data object with the following information:
 
-`roster`: A dictionary with all the player names as keys with whether they're an imposter or not as values.
+`roster`: A list of ILightPlayer objects listing all the players on the server.
 
 `gameConfig`: The complete game configuration.
 
@@ -36,7 +44,7 @@ This is sent to all clients at the beginning of the game, when a client complete
 
 ---
 
-`updateTasks [tasks: object]`
+`updateTasks [tasks: Record<string, boolean>]`
 
 This is sent to a client when it's task list is updated. It includes an object which is the new list with the task IDs as its keys and a boolean denoting whether they're done as its values.
 
@@ -74,6 +82,12 @@ Obviously, replace "player_name" and "computer_id" with the player name and comp
 
 ---
 
+`setColor [color: string]`
+
+Tell the server to set the player's color. Color can only be set in the waiting room.
+
+---
+
 `requestTask [id: string]`
 
 A client sends this to the server after it scans a task QR code and wants to perform the task. The only information sent is the task's ID. The client should not preemptively begin the task when this is sent; instead, it should wait for the server to instruct it to send `doTask`. 
@@ -94,3 +108,10 @@ Additionally, this message should also be sent if the client aborts the task for
 `taskComplete [data: {canceled: boolean}]`
 
 This message lets the server know that the client successfully QR code verified the task it was doing. Unless `canceled` = `true`. Then it means that the QR code verification failed.
+
+---
+`startGame` 
+
+(TESTING ONLY)
+
+This arguement-less command requests that the server start the game. It is used for testing games without the emergency button connected.

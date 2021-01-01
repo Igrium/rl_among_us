@@ -1,5 +1,8 @@
 import { Socket } from "socket.io";
 import { gameServer } from "../gameServer";
+import { waitingRoom } from "../waitingRoom";
+import { BaseTask } from "./tasks/base_task";
+
 
 /**
  * The server representation of a player.
@@ -14,6 +17,9 @@ export class Player {
     
     isImposter: boolean = false;
     isAlive: boolean = true;
+    color: string = '#000000'
+
+    currentTask?: BaseTask;
     
     /**
      * This player's task list <Task ID, Is Completed?>
@@ -23,6 +29,7 @@ export class Player {
     constructor(name: string, client: SocketIO.Socket) {
         this.name = name;
         this.client = client;
+        this.initializeSocket();
     }
 
     /**
@@ -35,9 +42,9 @@ export class Player {
         this.isAlive = true;
         // Setup tasks
         this.tasks = {};
-        for (let task in tasks) {
+        tasks.forEach((task) => {
             this.tasks[task] = false;
-        }
+        })
     }
 
     /**
@@ -49,16 +56,19 @@ export class Player {
     }
 
     /**
-     * Called when this player completes a task.
-     * @param id ID of the task that's been completed.
+     * Called when this player completes their current task.
      */
-    completeTask(id: string) {
+    completeTask() {
+        if (!this.currentTask) return;
+        const id = this.currentTask.id;
+
         if (!(this.isImposter || this.tasks[id])) {
-            this.tasks.id = true;
-            gameServer.recaculateTaskBar();
             console.log(`${this.name} completed task: ${id}`);
+            this.tasks[id] = true;
+            gameServer.recaculateTaskBar();
             this.updateTasks();
         }
+        this.currentTask = undefined;
     }
 
     /**
@@ -66,11 +76,11 @@ export class Player {
      */
     countTasks(): number {
         let completed = 0;
-        for (let key in this.tasks) {
+        Object.keys(this.tasks).forEach((key) => {
             if (this.tasks[key]) {
                 completed++;
             }
-        }
+        })
         return completed;
     }
 
@@ -78,9 +88,10 @@ export class Player {
      * Called when the client requests to start a task.
      * @param id Task that's been requested.
      */
-    requestTask(id: string) {
-        if (gameServer.tasks[id]) {
+    beginTask(id: string) {
+        if (this.currentTask === undefined && gameServer.tasks[id]) {
             let task = gameServer.tasks[id];
+            this.currentTask = task;
             task.beginTask(this);
         }
     }
@@ -92,17 +103,39 @@ export class Player {
         this.client.emit('updateTasks', this.tasks);
     }
 
+    setColor(color: string) {
+        if (!gameServer.isInGame()) {
+            this.color = color;
+            waitingRoom.updateRoster();
+        }
+    }
     
     /**
      * Initialize the player's socket connection.
      */
     protected initializeSocket() {
         // Called when the client wants to do a task.
+        
         this.client.on('requestTask', (id) => {
-            let task = gameServer.tasks[id];
-            task.beginTask(this);
+            if (gameServer.isInGame()) {
+                console.log(`${this.name} requested task: ${id}.`)
+                this.beginTask(id);
+            }
         }) 
+        
+        
+
+        this.client.on('setColor', (color: string) => {
+            if (!gameServer.isInGame()) {
+                console.log(`Set ${this.name}'s color to ${color}.`);
+                this.setColor(color);
+            }
+        })
+
+        this.client.on('startGame', () => {
+            if (!gameServer.isInGame()) {
+                gameServer.startGame();
+            }
+        })
     }
-
-
 }

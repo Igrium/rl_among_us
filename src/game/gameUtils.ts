@@ -1,4 +1,4 @@
-import { IMapFile } from "../../common/IMapFile"
+import { IMapFile, ITask } from "../../common/IMapFile"
 import { join } from "path";
 import { readFileSync } from "fs";
 
@@ -18,6 +18,27 @@ export module gameUtils {
         }
 
         return imposters;
+    }
+
+    /**
+     * Assign a player their tasks.
+     * 
+     * Will assign `numTasks` or `tasks.length` number of tasks, whichever is smaller.
+     * @param tasks All the tasks in the map.
+     * @param numTasks The number of tasks to assign each player.
+     */
+    export function assignTasks(tasks: ITask[], numTasks: number) {
+        let i = 0;
+        let availableTasks = [...tasks];
+        let assignedTasks: string[] = [];
+
+        while (availableTasks.length > 0 && i < numTasks) {
+            let index = Math.floor(Math.random() * availableTasks.length)
+            assignedTasks.push(availableTasks[index].id);
+            availableTasks.splice(index, 1);
+        }
+
+        return assignedTasks;
     }
     
     /**

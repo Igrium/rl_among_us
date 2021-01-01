@@ -51,8 +51,7 @@ export module gameServer {
         console.log('Starting game...');
         inGame = true;
         taskBar = 0;
-        
-        
+                
         // Choose imposter.
         let imposters = gameUtils.chooseImposters(Object.keys(players));
 
@@ -71,7 +70,8 @@ export module gameServer {
         // Initialize players and tell clients to start.
         for (let key in players) {
             let player = players[key];
-            player.startGame(roster[player.name].isImposter, []); // TODO: choose tasks.
+            let tasks = gameUtils.assignTasks(mapFile.tasks, 5);
+            player.startGame(roster[player.name].isImposter, tasks); // TODO: choose tasks.
             player.client.emit('startGame', {
                 roster: Object.values(roster),
                 gameConfig: gameConfig,

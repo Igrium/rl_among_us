@@ -7,7 +7,7 @@ interface IProps {
 
 const TestTaskDisplay: React.FunctionComponent<IProps> = ({ tasks, onTaskClicked }: IProps) => {
     function entry(taskID: string) {
-        if (tasks[taskID]) return <b>{taskID}</b>
+        if (tasks[taskID]) return <b>{tasks[taskID]}</b>
         else return taskID;
     }
 
@@ -21,7 +21,6 @@ const TestTaskDisplay: React.FunctionComponent<IProps> = ({ tasks, onTaskClicked
     const taskItems = Object.keys(tasks).map((taskID: string) => {
         return <li key={taskID}><button onClick={() => handlePress(taskID)}>{entry(taskID)}</button></li>
     } )
-
     return (
         <div>
             <h2>Tasks:</h2>

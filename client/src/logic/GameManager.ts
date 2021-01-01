@@ -97,6 +97,8 @@ export class GameManager {
 
     protected initializeSocket() {
         this.connectionHandler.io.on('startGame', this.startGame);
+        this.connectionHandler.io.on('updateTasks', this.updateTasks);
+        this.connectionHandler.io.on('doTask', this.doTask);
     }
 
     // EVENTS

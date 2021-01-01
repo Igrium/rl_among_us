@@ -44,7 +44,7 @@ This is sent to all clients at the beginning of the game, when a client complete
 
 ---
 
-`updateTasks [tasks: object]`
+`updateTasks [tasks: Record<string, boolean>]`
 
 This is sent to a client when it's task list is updated. It includes an object which is the new list with the task IDs as its keys and a boolean denoting whether they're done as its values.
 

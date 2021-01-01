@@ -19,6 +19,12 @@ export class GameManager {
         tasks: []
     };
 
+    /**
+     * All of this player's tasks
+     * {taskID, isDone?}
+     */
+    tasks: Record<string, boolean> = {};
+
     constructor(connectionHandler: ConnectionHandler) {
         this.connectionHandler = connectionHandler;
         this.initializeSocket()
@@ -32,6 +38,15 @@ export class GameManager {
         const task = this.getTask(taskID);
         if (task === undefined) throw `No task of ID ${taskID}`;
         return task;
+    }
+
+    /**
+     * Request that the server assign the client a task.
+     * @param taskID Task ID
+     */
+    requestTask(taskID: string) {
+        console.log(`Requesting task ${taskID}...`);
+        this.connectionHandler.io.emit('requestTask', taskID);
     }
 
     /**
@@ -75,6 +90,11 @@ export class GameManager {
         this.em.emit('doTask', task)
     }
 
+    protected updateTasks = (tasks: Record<string, boolean>) => {
+        this.tasks = tasks;
+        this.em.emit('updateTasks', this.tasks);
+    }
+
     protected initializeSocket() {
         this.connectionHandler.io.on('startGame', this.startGame);
     }
@@ -94,5 +114,13 @@ export class GameManager {
      */
     onDoTask(listener: (task: ITask) => void) {
         this.em.on('doTask', listener);
+    }
+
+    /**
+     * Called when the client receives an update to it's task list from the server.
+     * @param listener Event listener. (key: taskID, value: isDone)
+     */
+    onUpdateTasks(listener: (tasks: Record<string, boolean>) => void) {
+        this.em.on('updateTasks', listener);
     }
 }

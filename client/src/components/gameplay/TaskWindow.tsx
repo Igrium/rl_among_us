@@ -16,16 +16,17 @@ export class TaskWindow extends Component<IProps> {
         if (this.props.onFinish) this.props.onFinish(false);
     }
 
-    getTask(id: string) {
+    // UPDATE THIS METHOD WITH NEW TASKS
+    getTask(classID: string) {
         const { gameManager, task } = this.props;
-        if (id === 'task') return <Task gameManager={gameManager} task={task} onFinish={this.onFinish}/>
+        if (classID === 'basic') return <Task gameManager={gameManager} task={task} onFinish={this.onFinish}/>
     }
 
     render() {
         return (
             <div>
                 <h1>Task Window</h1>
-                {this.getTask(this.props.task.id)}
+                {this.getTask(this.props.task.classID)}
             </div>
         )
     }

@@ -8,3 +8,11 @@
     top: 0;
     right: 0;
 }
+
+.WindowHeader {
+    color: gray;
+}
+
+.TaskDiv {
+    outline: 1px solid gray;
+}

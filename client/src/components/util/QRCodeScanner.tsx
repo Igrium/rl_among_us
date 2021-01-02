@@ -27,9 +27,14 @@ export class QRCodeScanner extends Component<IProps, IState> {
         this.props.onScan(this.state.textValue);
     }
 
+    handleClose = () => {
+        this.props.onScan('');
+    }
+
     render() {
         return (
             <div>
+                <button className='CloseButton' onClick={this.handleClose}>X</button>
                 <form onSubmit={this.handleSubmit}>
                     <h2>{this.props.displayText}</h2>
                     <label>Enter QR Code Text</label>

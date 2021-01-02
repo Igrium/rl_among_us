@@ -30,8 +30,7 @@ export class TaskWindow extends Component<IProps> {
     render() {
         return (
             <div>
-                <h1>Task Window</h1>
-                {this.getTask(this.props.task.classID)}
+                <div className='TaskDiv'>{this.getTask(this.props.task.classID)}</div>
                 <button className='CloseButton' onClick={this.handleCloseButton}>X</button>
             </div>
         )

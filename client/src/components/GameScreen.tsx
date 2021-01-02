@@ -95,7 +95,11 @@ class GameScreen extends Component<IProps, IState> {
             else if (mode === ScannerMode.VERIFY_TASK) return "Please re-scan task QR code."
         }
 
-        return <QRCodeScanner onScan={this.handleScan} displayText={getScanDisplayText(this.state.scannerMode)} />
+        return (
+            <Popup modal defaultOpen closeOnDocumentClick={false} closeOnEscape={false}>
+                <QRCodeScanner onScan={this.handleScan} displayText={getScanDisplayText(this.state.scannerMode)} />
+            </Popup>
+        )
     }
 
     render() {

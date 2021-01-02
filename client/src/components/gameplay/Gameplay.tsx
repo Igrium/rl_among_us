@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { GameManager } from '../../logic/GameManager'
 import PlayerList from '../testing/PlayerList'
-import TestTaskDisplay from '../testing/TestTaskDisplay'
 import TaskList from './tasks/TaskList'
 
 interface IProps {

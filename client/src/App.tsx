@@ -1,5 +1,6 @@
 import React, { useEffect, Component } from 'react';
 import './App.css';
+import './css/Game.css';
 import LoginScreen from './components/LoginScreen';
 import ConnectionHandler, {IConnectionInfo} from './logic/ConnectionHandler'
 import WaitingRoom from './components/WaitingRoom';

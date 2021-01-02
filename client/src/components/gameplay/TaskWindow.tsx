@@ -13,14 +13,18 @@ interface IProps {
 export class TaskWindow extends Component<IProps> {
     manifest: any;
 
-    onFinish = () => {
-        if (this.props.onFinish) this.props.onFinish(false);
-    }
-
     // UPDATE THIS METHOD WITH NEW TASKS
     getTask(classID: string) {
         const { gameManager, task } = this.props;
         if (classID === 'basic') return <BasicTask gameManager={gameManager} task={task} onFinish={this.onFinish}/>
+    }
+
+    onFinish = () => {
+        if (this.props.onFinish) this.props.onFinish(false);
+    }
+
+    handleCloseButton = () => {
+        if (this.props.onFinish) this.props.onFinish(true);
     }
 
     render() {
@@ -28,6 +32,7 @@ export class TaskWindow extends Component<IProps> {
             <div>
                 <h1>Task Window</h1>
                 {this.getTask(this.props.task.classID)}
+                <button className='CloseButton' onClick={this.handleCloseButton}>X</button>
             </div>
         )
     }

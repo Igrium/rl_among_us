@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
+import Popup from 'reactjs-popup'
 import Gameplay from './gameplay/Gameplay'
 import { GameManager } from '../logic/GameManager'
 import TaskWindow from './gameplay/TaskWindow'
 import { ITask } from '../../../common/IMapFile'
 import QRCodeScanner from './util/QRCodeScanner'
-import { throws } from 'assert'
+
+import 'reactjs-popup/dist/index.css'
 
 interface IProps {
     gameManager: GameManager;
@@ -83,7 +85,8 @@ class GameScreen extends Component<IProps, IState> {
     private getTaskWindow() {
         const { taskID } = this.state;
         const gameManager = this.props.gameManager;
-        return <TaskWindow gameManager={gameManager} task={gameManager.getTaskSafe(taskID)} onFinish={this.handleTaskFinish} />
+        const taskWindow = <TaskWindow gameManager={gameManager} task={gameManager.getTaskSafe(taskID)} onFinish={this.handleTaskFinish} />
+        return <Popup modal defaultOpen closeOnDocumentClick={false} closeOnEscape={false}>{taskWindow}</Popup>;
     }
 
     private getScanWindow() {

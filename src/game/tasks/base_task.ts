@@ -60,7 +60,9 @@ export abstract class BaseTask {
                         this.onTaskComplete(player, !data.canceled);
                     })
                 }
-            }      
+            } else {
+                this.onTaskComplete(player, false);
+            }
         })
     }
 

@@ -31,6 +31,25 @@ export class GameManager {
         this.connectionHandler = connectionHandler;
         this.initializeSocket()
     }
+    
+    /**
+     * The name of the local player.
+     */
+    get localPlayerName() {
+        return this.connectionHandler.connectionInfo.playerName;
+    }
+
+    /**
+     * The light player object representing the local player.
+     * For efficiency, use `localPlayerName` if you only need the name.
+     */
+    get localPlayer() {
+        const name = this.localPlayerName;
+        for (let player of this.players) {
+            if (player.name === name) return player;
+        }
+        throw "Local player name as defined in connection is not present in player list. This is probably the server's fault."
+    }
 
     getTask(taskID: string) {
         return this.mapInfo.tasks.find(task => task.id === taskID);

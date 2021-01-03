@@ -1,5 +1,5 @@
 import { ITask } from "../../../common/IMapFile";
-import { BaseTask } from "./base_task";
+import { BaseTask } from "./baseTask";
 import { BasicTask } from "./basicTask";
 
 export module taskManifest {

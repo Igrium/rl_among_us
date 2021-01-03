@@ -1,4 +1,4 @@
-import { BaseTask } from "./base_task";
+import { BaseTask } from "./baseTask";
 import { Player } from "../player";
 
 export class BasicTask extends BaseTask {

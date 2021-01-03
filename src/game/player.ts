@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { gameServer } from "../gameServer";
 import { waitingRoom } from "../waitingRoom";
-import { BaseTask } from "./tasks/base_task";
+import { BaseTask } from "./tasks/baseTask";
 
 
 /**

@@ -5,7 +5,7 @@ import { IPlayerConnectionInfo } from "./io/playerConnectionInfo";
 import { app } from "./app";
 import { allowedNodeEnvironmentFlags, mainModule } from "process";
 import { constants } from "./constants";
-import { BaseTask } from "./game/tasks/base_task";
+import { BaseTask } from "./game/tasks/baseTask";
 import { gameUtils } from "./game/gameUtils";
 import { taskManifest } from "./game/tasks/taskManifest";
 import { FieldComputerInterface } from "./game/gameField/fieldComputerInterface";

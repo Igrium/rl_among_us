@@ -2,13 +2,13 @@ import React, { Component } from 'react'
 import { GameManager } from '../../../logic/GameManager'
 import { ITask } from '../../../../../common/IMapFile'
 
-interface IProps {
+export interface IProps {
     gameManager: GameManager,
     task: ITask,
     onFinish: () => void
 }
 
-abstract class Task extends Component<IProps> {
+abstract class Task<State = {}> extends Component<IProps, State> {
     /**
      * Called when the task is finished.
      */

@@ -31,7 +31,7 @@ export class TaskWindow extends Component<IProps> {
 
     render() {
         return (
-            <div>
+            <div style={{display: 'inline-block'}}>
                 <div className='TaskDiv'>{this.getTask(this.props.task.classID)}</div>
                 <button className='CloseButton' onClick={this.handleCloseButton}>X</button>
             </div>

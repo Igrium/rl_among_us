@@ -10,7 +10,7 @@ export enum GameState {
 
 export class GameManager {
     private em = new EventEmitter();
-    private connectionHandler: ConnectionHandler;
+    readonly connectionHandler: ConnectionHandler;
 
     players: ILightPlayer[] = [];
     gameConfig: any = {};

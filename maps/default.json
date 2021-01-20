@@ -3,7 +3,7 @@
     "tasks": [
         {
             "id": "task1",
-            "classID": "basic",
+            "classID": "simonSays",
             "coords": [23, 52],
             "icon": "/assets/icon.png",
             "requireConfirmationScan": true,

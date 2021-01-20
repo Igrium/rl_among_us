@@ -4,6 +4,7 @@ import { GameManager } from '../../logic/GameManager';
 import { ITask } from '../../../../common/IMapFile';
 import BasicTask from './tasks/BasicTask';
 import DownloadTask from './tasks/DownloadTask';
+import SimonSays from './tasks/SimonSays';
 
 interface IProps {
     gameManager: GameManager;
@@ -19,6 +20,7 @@ export class TaskWindow extends Component<IProps> {
         const { gameManager, task } = this.props;
         if (classID === 'basic') return <BasicTask gameManager={gameManager} task={task} onFinish={this.onFinish}/>
         if (classID == 'download') return <DownloadTask gameManager={gameManager} task={task} onFinish={this.onFinish}/>
+        if (classID === 'simonSays') return <SimonSays gameManager={gameManager} task={task} onFinish={this.onFinish}/>
     }
 
     onFinish = () => {

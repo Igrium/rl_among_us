@@ -2,6 +2,8 @@
 ## Intro
 This document outlines the communication protocols between the game server and player clients. All of the communication happens through websockets using the events listed here.
 
+Note: This document does NOT include communications implemented by individual tasks or GFC interfaces. The naming convention for task communications is `task.[className].[event]`
+
 ---
 
 ## Server -> Client events

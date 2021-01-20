@@ -15,4 +15,5 @@
 
 .TaskDiv {
     outline: 1px solid gray;
+    display: 'inline-block';
 }

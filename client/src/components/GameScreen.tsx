@@ -86,7 +86,7 @@ class GameScreen extends Component<IProps, IState> {
         const { taskID } = this.state;
         const gameManager = this.props.gameManager;
         const taskWindow = <TaskWindow gameManager={gameManager} task={gameManager.getTaskSafe(taskID)} onFinish={this.handleTaskFinish} />
-        return <Popup modal defaultOpen closeOnDocumentClick={false} closeOnEscape={false}>{taskWindow}</Popup>;
+        return <Popup modal defaultOpen closeOnDocumentClick={false} closeOnEscape={false} contentStyle={{width: 'max-content'}}>{taskWindow}</Popup>;
     }
 
     private getScanWindow() {

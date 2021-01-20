@@ -3,6 +3,7 @@ import Task from './tasks/Task'
 import { GameManager } from '../../logic/GameManager';
 import { ITask } from '../../../../common/IMapFile';
 import BasicTask from './tasks/BasicTask';
+import DownloadTask from './tasks/DownloadTask';
 
 interface IProps {
     gameManager: GameManager;
@@ -17,6 +18,7 @@ export class TaskWindow extends Component<IProps> {
     getTask(classID: string) {
         const { gameManager, task } = this.props;
         if (classID === 'basic') return <BasicTask gameManager={gameManager} task={task} onFinish={this.onFinish}/>
+        if (classID == 'download') return <DownloadTask gameManager={gameManager} task={task} onFinish={this.onFinish}/>
     }
 
     onFinish = () => {
@@ -29,7 +31,7 @@ export class TaskWindow extends Component<IProps> {
 
     render() {
         return (
-            <div>
+            <div style={{display: 'inline-block'}}>
                 <div className='TaskDiv'>{this.getTask(this.props.task.classID)}</div>
                 <button className='CloseButton' onClick={this.handleCloseButton}>X</button>
             </div>

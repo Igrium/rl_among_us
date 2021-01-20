@@ -11,11 +11,11 @@
         },
         {
             "id": "task2",
-            "classID": "basic",
+            "classID": "download",
             "coords": [23, 23],
             "icon": "/assets/icon.png",
-            "requireConfirmationScan": false,
-            "params": {}
+            "requireConfirmationScan": true,
+            "params": {"mode": "upload"}
         }
     ]
 }

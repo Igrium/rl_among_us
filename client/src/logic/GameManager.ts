@@ -96,14 +96,16 @@ export class GameManager {
         this.em.emit('startGame');
     }
 
-    protected doTask = (id: string) => {
+    protected doTask = (id: string, callback: (params: {started: boolean}) => void) => {
         // locate task
         const task = this.getTask(id);
         if (task === undefined) {
             console.error(`The server has requested client to do task ${id}, but it is not in the map file.`);
+            callback({started: false});
             return;
         }
         this.em.emit('doTask', task)
+        callback({started: true});
     }
 
     protected updateTasks = (tasks: Record<string, boolean>) => {

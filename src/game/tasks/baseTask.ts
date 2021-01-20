@@ -42,28 +42,31 @@ export abstract class BaseTask {
     beginTask(player: Player): void {
 
         // Callback is called once client confirms it has started the task.
-        player.client.emit('doTask', this.id, (data: {started: boolean}) => {
+        player.client.emit('doTask', this.id, (data: {started: boolean}) => {      
             if (data.started) {
+                // Only register taskFinished once the client has confirmed the task is started to prevent memory leak.
+                player.client.once('taskFinished', (data: {aborted: boolean}) => {
+                    // Task completion code
+                    console.log(`${player.name} finished task "${this.id}"`);
+                    this.onTaskFinished(player, data.aborted);
+                    if (!data.aborted) {
+                        if (!this.requireConfirmationScan) {
+                            this.onTaskComplete(player, true);
+                        } else {
+                            // Listen for verification scan.
+                            player.client.once('taskComplete', (data: {canceled: boolean}) => {
+                                this.onTaskComplete(player, !data.canceled);
+                            })
+                        }
+                    } else {
+                        this.onTaskComplete(player, false);
+                    }
+                })
+
+
                 this.doTask(player);
             }
         });
-
-        player.client.once('taskFinished', (data: {aborted: boolean}) => {
-            console.log(`${player.name} finished task "${this.id}"`);
-            this.onTaskFinished(player, data.aborted);
-            if (!data.aborted) {
-                if (!this.requireConfirmationScan) {
-                    this.onTaskComplete(player, true);
-                } else {
-                    // Listen for verification scan.
-                    player.client.once('taskComplete', (data: {canceled: boolean}) => {
-                        this.onTaskComplete(player, !data.canceled);
-                    })
-                }
-            } else {
-                this.onTaskComplete(player, false);
-            }
-        })
     }
 
     /**

@@ -3,6 +3,10 @@ export const constants = {
         ILLEGAL_ARGS: 'illegalArgs',
         NAME_EXISTS: 'nameExists',
         GAME_IN_SESSION: 'gameInSession'
-    }
+    },
+    bannedNames: [
+        'SKIP',
+        'TIE'
+    ]
 }
 

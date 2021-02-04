@@ -1,6 +1,7 @@
 import { IMapFile, ITask } from "../../common/IMapFile"
 import { join } from "path";
 import { readFileSync } from "fs";
+import { gameServer } from "../gameServer";
 
 /**
  * An assortment of utility functions for the game server.
@@ -52,5 +53,14 @@ export module gameUtils {
         let json = JSON.parse(rawdata);
 
         return <IMapFile> json;
+    }
+
+    /**
+     * Emit an event to all registered player clients.
+     */
+    export function announce(event: string | symbol, ...args: any[]) {
+        Object.values(gameServer.players).forEach(player => {
+            player.client.emit(event, args);
+        })
     }
 }

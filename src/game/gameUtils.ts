@@ -2,6 +2,8 @@ import { IMapFile, ITask } from "../../common/IMapFile"
 import { join } from "path";
 import { readFileSync } from "fs";
 import { gameServer } from "../gameServer";
+import { Player } from "./player";
+import ILightPlayer from "../../common/ILightPlayer";
 
 /**
  * An assortment of utility functions for the game server.
@@ -63,4 +65,24 @@ export module gameUtils {
             player.client.emit(event, args);
         })
     }
+
+    export function generateLightPlayer(player: Player): ILightPlayer {
+        return {
+            name: player.name,
+            color: player.color,
+            isImposter: player.isImposter,
+            isAlive: player.isAlive
+        };
+    }
+
+    export function generateLightRoster(players: Record<string, Player>): Record<string, ILightPlayer> {
+        let roster: Record<string, ILightPlayer> = {};
+        for (let key in players) {
+            let player = players[key];
+            roster[player.name] = generateLightPlayer(player);    
+        }
+
+        return roster;
+    }
+    
 }

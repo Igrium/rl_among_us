@@ -210,5 +210,20 @@ export module gameServer {
             })
         }
     }
+
+    /**
+     * Kill a player.
+     * @param playerName Player to kill.
+     * @param ejected If this player was ejected in a meeting. 
+     * If false, assumed to be killed by imposter.
+     */
+    export function killPlayer(playerName: string, ejected: boolean) {
+        let player = players[playerName];
+        if (player.isAlive) {
+            player.isAlive = false;
+
+            gameUtils.announce('updateGameRoster', Object.values(gameUtils.generateLightRoster(players)));
+        }
+    }
 }
 

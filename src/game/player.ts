@@ -56,6 +56,15 @@ export class Player {
     }
 
     /**
+     * Called when a player is killed.
+     * Should not notify the client directly. That is done in a mass roster update.
+     * @param ejected Was the player ejected in a meeting?
+     */
+    kill(ejected: boolean) {
+
+    }
+
+    /**
      * Called when this player completes their current task.
      * @param verified Whether the task was verified complete.
      */

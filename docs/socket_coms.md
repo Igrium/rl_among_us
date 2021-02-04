@@ -51,6 +51,14 @@ This is sent to a client when it's task list is updated. It includes an object w
 
 ---
 
+`updateGameRoster [roster: ILightPlayer[]]`
+
+Contrary to `updateRoster`, this is sent throughout the game when various events happen such as a player getting killed. When recieved, the client should check if the local player has been killed and run the appropriate code accordingly.
+
+`roster`: A list of ILightPlayer objects listing all the players on the server.
+
+---
+
 `doTask [id: string] [callback: function({started: boolean})`
 
 This is sent to the client when the server wants the client to start doing a task. It's usually never called unless the client requested to do that task. It contains a string with the task's ID and a callback function that confirms with the server that the task has been started.

@@ -44,12 +44,14 @@ export class Meeting {
         this.presentPlayers[playerName] = true;
 
         // See if we should start the meeting
-        for (let player in Object.keys(gameServer.players)) {
-            if (!this.presentPlayers[player]) {
-                return;
+        if (this.state === MeetingState.WAITING) {
+            for (let player in Object.keys(gameServer.players)) {
+                if (!this.presentPlayers[player]) {
+                    return;
+                }
             }
+            this.startDiscussion();
         }
-        this.startDiscussion();
     }
 
     startDiscussion() {
@@ -90,6 +92,10 @@ export class Meeting {
         let result = countVotes(Object.values(this.playerVotes));
         let data = {result: result, playerVotes: this.playerVotes};
         gameUtils.announce('endVote', data);
+
+        if (!(result === 'SKIP' || result === 'TIE')) {
+            gameServer.killPlayer(result, true);
+        }
 
         setTimeout(() => {
             gameUtils.announce('resumePlay');

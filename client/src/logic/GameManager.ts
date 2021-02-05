@@ -2,6 +2,7 @@ import { EventEmitter } from "events"
 import ConnectionHandler from "./ConnectionHandler";
 import ILightPlayer from "../../../common/ILightPlayer";
 import { IMapFile, ITask } from "../../../common/IMapFile";
+import { MeetingManager } from "./MeetingManager";
 
 export enum GameState {
     Gameplay,
@@ -11,6 +12,8 @@ export enum GameState {
 export class GameManager {
     private em = new EventEmitter();
     private connectionHandler: ConnectionHandler;
+
+    public readonly meetingManager: MeetingManager;
 
     players: ILightPlayer[] = [];
     gameConfig: any = {};
@@ -30,6 +33,7 @@ export class GameManager {
     constructor(connectionHandler: ConnectionHandler) {
         this.connectionHandler = connectionHandler;
         this.initializeSocket()
+        this.meetingManager = new MeetingManager(this, connectionHandler);
     }
     
     /**

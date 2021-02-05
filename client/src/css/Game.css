@@ -17,3 +17,13 @@
     outline: 1px solid gray;
     display: 'inline-block';
 }
+
+/* Placeholder */
+
+.dot {
+    height: 25px;
+    width: 25px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+  }

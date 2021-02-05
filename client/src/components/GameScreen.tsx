@@ -7,6 +7,7 @@ import { ITask } from '../../../common/IMapFile'
 import QRCodeScanner from './util/QRCodeScanner'
 
 import 'reactjs-popup/dist/index.css'
+import Meeting from './gameplay/meeting/Meeting'
 
 interface IProps {
     gameManager: GameManager;
@@ -77,9 +78,19 @@ class GameScreen extends Component<IProps, IState> {
         this.setState({ scannerMode: ScannerMode.SCAN_TASK, scannerOpen: true });
     }
 
+    private handleBeginMeeting = () => {
+        this.handleTaskFinish(true);
+        this.setState({ gameState: GameState.MEETING });
+    }
+
+    private handleResumePlay = () => {
+        this.setState({ gameState: GameState.GAMEPLAY });
+    }
+
     private initListeners() {
         const gameManager = this.props.gameManager;
         gameManager.onDoTask(this.handleBeginTask);
+        gameManager.meetingManager.onMeetingCalled(this.handleBeginMeeting);
     }
 
     private getTaskWindow() {
@@ -102,6 +113,11 @@ class GameScreen extends Component<IProps, IState> {
         )
     }
 
+    private getMeetingWindow() {
+        const meetingWindow = <Meeting gameManager={this.props.gameManager} />;
+        return <Popup modal defaultOpen closeOnDocumentClick={false} closeOnEscape={false} contentStyle={{width: 'max-content'}}>{meetingWindow}</Popup>
+    }
+
     render() {
         const { gameState, taskID, scannerOpen } = this.state;
         const gameManager = this.props.gameManager;
@@ -110,6 +126,7 @@ class GameScreen extends Component<IProps, IState> {
                 <Gameplay gameManager={this.props.gameManager} onRequestTask={this.handleRequestTask}/>
                 {/* Render tasks */}
                 {gameState === GameState.TASK ? this.getTaskWindow() : null}
+                {gameState === GameState.TASK ? this.getMeetingWindow() : null}
                 {scannerOpen ? this.getScanWindow() : null}
             </div>
         )

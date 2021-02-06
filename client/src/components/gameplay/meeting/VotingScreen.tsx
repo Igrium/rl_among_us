@@ -37,7 +37,7 @@ export class VotingScreen extends Component<IProps> {
         return <button style={{ color: color }} onClick={handleVote}>{player.name}</button>
     }
 
-    handleSkip() {
+    handleSkip = () => {
         this.props.onVote('SKIP');
     }
 

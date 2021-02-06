@@ -202,7 +202,7 @@ export module gameServer {
      * @param emergency True if this meeting comes from the emergency button.
      */
     export function beginMeeting(emergency: boolean) {
-        if (currentMeeting === undefined) {
+        if (currentMeeting === undefined && isInGame()) {
             currentMeeting = new Meeting();
             currentMeeting.call(emergency);
             currentMeeting.onEndMeeting(() => {

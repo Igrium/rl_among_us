@@ -18,7 +18,7 @@ export class ResultsScreen extends Component<IProps> {
 
     player(player: ILightPlayer, voters: string[]) {
         let isRed = (this.props.renderImposters && player.isImposter);
-        let color;
+        let color = '#000';
 
         if (isRed) {
             color = player.isAlive ? '#7F0400' : '#804240'
@@ -29,9 +29,9 @@ export class ResultsScreen extends Component<IProps> {
         return (
             <p style={{color: color}}>
                 {player.name}
-                {voters.map(voterColor => (
+                {voters ? voters.map(voterColor => (
                     <span className="dot" style={{backgroundColor: voterColor}}></span>
-                ))}
+                )): null}
             </p>
         ) 
     }
@@ -48,7 +48,7 @@ export class ResultsScreen extends Component<IProps> {
             sortedRoster[player.name] = player;
         })
 
-        Object.keys(playerVotes).forEach(playerName => {
+        for (let playerName in playerVotes) {
             let target = playerVotes[playerName];
 
             if (target in votes) {
@@ -56,9 +56,9 @@ export class ResultsScreen extends Component<IProps> {
             } else {
                 votes[target] = [sortedRoster[playerName].color];
             }
-        })
-
-        return votes
+        }
+        console.log(votes);
+        return votes;
     }
     
     render() {

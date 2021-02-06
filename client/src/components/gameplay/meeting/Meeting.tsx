@@ -31,22 +31,22 @@ export class Meeting extends Component<IProps, IState> {
             results: {result: 'TIE', playerVotes: {}}
         }
 
-        this.handleArrive.bind(this);
-        this.handleVote.bind(this);
     }
 
     get meetingManager() { return this.props.gameManager.meetingManager }
 
     componentDidMount() {
-        this.meetingManager.onStartDiscussion(() => {
+        this.meetingManager.onStartDiscussion((endTime: number) => {
+            console.log(`Discussion started. End time: ${endTime}`)
             this.setState({ meetingState: MeetingState.DISCUSSION });
         })
 
         this.meetingManager.onStartVote(() => {
-            this.setState({ meetingState: MeetingState.DISCUSSION });
+            this.setState({ meetingState: MeetingState.VOTING });
         })
 
         this.meetingManager.onEndVote((data) => {
+            console.log(`Vote is complete! Result: ${data.result}`)
             this.setState( {meetingState: MeetingState.END_VOTE, results: data} )
         });
     }
@@ -69,11 +69,12 @@ export class Meeting extends Component<IProps, IState> {
         )
     }
 
-    handleArrive() {
+    handleArrive = () => {
         this.meetingManager.markPresent();
+        this.setState({ meetingState: MeetingState.PRESENT });
     }
 
-    handleVote(target: string) {
+    handleVote = (target: string) => {
         this.meetingManager.vote(target);
         this.setState({ meetingState: MeetingState.VOTED })
     }
@@ -89,7 +90,7 @@ export class Meeting extends Component<IProps, IState> {
             return this.waitingScreen();
         }
         if (meetingState === MeetingState.END_VOTE) {
-            <ResultsScreen roster={gameManager.players} renderImposters={renderImposters} result={results.result} playerVotes={results.playerVotes}/>
+            return <ResultsScreen roster={gameManager.players} renderImposters={renderImposters} result={results.result} playerVotes={results.playerVotes}/>
         }
         return (
             <VotingScreen allowVoting={meetingState === MeetingState.VOTING} roster={gameManager.players} renderImposters={renderImposters} onVote={this.handleVote} />

@@ -171,6 +171,12 @@ This arguement-less command requests that the server start the game. It is used 
 
 **Meetings**
 
+`reportBody`
+
+Sent to the server when the player has indicated they wish to report a body and call a meeting.
+
+---
+
 `presentAtMeeting`
 
 This arguement-less command should be called when a player indicates that they've arrived at the meeting location and are ready to talk. Will only be respected if a meeting has been called.

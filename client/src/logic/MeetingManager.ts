@@ -3,10 +3,10 @@ import ConnectionHandler from "./ConnectionHandler";
 import { GameManager } from "./GameManager";
 
 export class MeetingManager {
-    private gm: GameManager;
-    private cm: ConnectionHandler;
+    private readonly gm: GameManager;
+    private readonly cm: ConnectionHandler;
 
-    private em: EventEmitter = new EventEmitter();
+    private readonly em = new EventEmitter();
 
     constructor(gm: GameManager, cm: ConnectionHandler) {
         this.gm = gm;
@@ -16,26 +16,32 @@ export class MeetingManager {
         cm.io.on('startDiscussion', this.startDiscussion);
         cm.io.on('startVote', this.startVote);
         cm.io.on('endVote', this.endVote);
+        cm.io.on('resumePlay', this.resumePlay);
     }
 
-    protected meetingCalled(emergency: boolean) {
+    protected meetingCalled = (emergency: boolean) => {
         this.em.emit('meetingCalled', emergency);
     }
 
-    protected startDiscussion(endTime: number) {
+    protected startDiscussion = (endTime: number) => {
         this.em.emit('startDiscussion', endTime);
     }
 
-    protected startVote(endTime: number) {
+    protected startVote = (endTime: number) => {
+        console.log('Starting vote...');
         this.em.emit('startVote', endTime);
     }
 
-    protected endVote(data: any) {
+    protected endVote = (data: any) => {
         this.em.emit('endVote', data);
     }
 
-    protected resumePlay() {
+    protected resumePlay = () => {
         this.em.emit('resumePlay');
+    }
+
+    reportBody() {
+        this.cm.io.emit('reportBody');
     }
 
     /**

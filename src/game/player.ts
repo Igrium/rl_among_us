@@ -147,5 +147,11 @@ export class Player {
                 gameServer.startGame();
             }
         })
+
+        this.client.on('reportBody', () => {
+            if (gameServer.isInGame()) {
+                gameServer.beginMeeting(false);
+            }
+        })
     }
 }

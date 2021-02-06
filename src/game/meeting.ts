@@ -10,7 +10,7 @@ enum MeetingState {
     END_VOTE
 }
 
-const EJECT_ANIM_DURATION = 2000;
+const EJECT_ANIM_DURATION = 5000;
 
 export class Meeting {
     state: MeetingState = MeetingState.WAITING
@@ -20,7 +20,7 @@ export class Meeting {
     readonly discussionTime: number = gameServer.gameConfig.discussionTime * 1000
     readonly votingTime: number = gameServer.gameConfig.votingTime * 1000
 
-    emitter: EventEmitter;
+    emitter = new EventEmitter();
 
     constructor() {
         Object.keys(gameServer.players).forEach(playerName => {
@@ -42,10 +42,12 @@ export class Meeting {
 
     handlePlayerArrived(playerName: string) {
         this.presentPlayers[playerName] = true;
+        console.log(`${playerName} has arrived at the meeting.`)
 
         // See if we should start the meeting
         if (this.state === MeetingState.WAITING) {
-            for (let player in Object.keys(gameServer.players)) {
+            console.log(this.presentPlayers);
+            for (let player in gameServer.players) {
                 if (!this.presentPlayers[player]) {
                     return;
                 }
@@ -55,6 +57,7 @@ export class Meeting {
     }
 
     startDiscussion() {
+        console.log("Starting discussion...")
         gameUtils.announce('startDiscussion', Date.now() + this.discussionTime);
         this.state = MeetingState.DISCUSSION;
         setTimeout(() => this.startVote(), this.discussionTime);
@@ -62,28 +65,31 @@ export class Meeting {
     }
 
     startVote() {
+        console.log("Starting vote...")
         gameUtils.announce('startVote', Date.now() + this.votingTime);
         this.state = MeetingState.VOTING
+
+        const timeout = setTimeout(() => this.endVote(), this.votingTime);
 
         Object.values(gameServer.players).forEach(player => {
             // When server recieves vote
             player.client.once('vote', (target: string) => {
                 if (this.state !== MeetingState.VOTING) return;
-
+                console.log(`${player.name} voted for ${target}.`)
                 this.playerVotes[player.name] = target;
                 {
                     // See if everyone has voted
-                    for (let playerName in Object.keys(this.presentPlayers)) {
+                    for (let playerName in this.presentPlayers) {
                         if (this.presentPlayers[playerName] && !(playerName in this.playerVotes)) {
                             return;
                         }
                     }
+                    clearTimeout(timeout);
                     this.endVote();
                 }
             })
         })
 
-        setTimeout(() => this.endVote(), this.votingTime);
         this.emitter.emit('startVote', Date.now() + this.votingTime);
     }
 
@@ -91,6 +97,7 @@ export class Meeting {
         this.state = MeetingState.END_VOTE;
         let result = countVotes(Object.values(this.playerVotes));
         let data = {result: result, playerVotes: this.playerVotes};
+        console.log(`Vote is complete! Result: ${result}`);
         gameUtils.announce('endVote', data);
 
         if (!(result === 'SKIP' || result === 'TIE')) {
@@ -137,14 +144,14 @@ function countVotes(votes: string[]): string {
     let max = 0;
     let topVotes: string[] = []
 
-    Object.keys(count).forEach(target => {
+    for (let target in count) {
         if (count[target] > max) {
             topVotes = [target];
             max = count[target];
         } else if (count[target] === max) {
-            topVotes.push[target];
+            topVotes.push(target);
         }
-    })
+    }
 
     if (topVotes.length > 1) return 'TIE';
     return topVotes[0];

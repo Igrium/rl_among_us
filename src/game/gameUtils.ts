@@ -62,7 +62,7 @@ export module gameUtils {
      */
     export function announce(event: string | symbol, ...args: any[]) {
         Object.values(gameServer.players).forEach(player => {
-            player.client.emit(event, args);
+            player.client.emit(event, ...args);
         })
     }
 

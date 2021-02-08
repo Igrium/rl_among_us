@@ -23,9 +23,9 @@ export class VotingScreen extends Component<IProps> {
         let color;
 
         if (isRed) {
-            color = player.isAlive && allowVoting ? '#7F0400' : '#804240'
+            color = player.isAlive ? 'imposter-alive' : 'imposter-dead'
         } else {
-            color = player.isAlive && allowVoting ? '#000' : '#333'
+            color = player.isAlive ? 'crewmate-alive' : 'crewmate-dead'
         }
 
         const handleVote = () => {
@@ -34,7 +34,10 @@ export class VotingScreen extends Component<IProps> {
             }
         }
 
-        return <button style={{ color: color }} onClick={handleVote}>{player.name}</button>
+        console.log(color);
+
+        if (allowVoting) return <button className={`votingPlayer ${color}`} onClick={handleVote}>{player.name}</button>
+        else return <span className={color}>{player.name}</span>
     }
 
     handleSkip = () => {

@@ -18,6 +18,27 @@
     display: 'inline-block';
 }
 
+.crewmate-alive {
+    color: black;
+}
+
+.crewmate-dead {
+    color: #444;
+}
+
+.imposter-alive {
+    color: red;
+}
+
+.imposter-dead {
+    color: #7a312d;
+}
+
+.voting-player {
+    font-weight: bold;
+}
+
+
 /* Placeholder */
 
 .dot {

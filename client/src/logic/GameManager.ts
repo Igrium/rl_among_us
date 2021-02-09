@@ -55,6 +55,7 @@ export class GameManager {
         throw "Local player name as defined in connection is not present in player list. This is probably the server's fault."
     }
 
+
     getTask(taskID: string) {
         return this.mapInfo.tasks.find(task => task.id === taskID);
     }
@@ -122,11 +123,22 @@ export class GameManager {
         this.em.emit('updateTaskBar', value);
     }
 
+    protected updateGameRoster = (roster: ILightPlayer[]) => {
+        const oldPlayer = this.localPlayer;
+        this.players = roster;
+        this.em.emit('updateGameRoster', roster);
+
+        if (oldPlayer.isAlive && !this.localPlayer.isAlive) {
+            this.em.emit('localPlayerKilled');
+        }
+    }
+
     protected initializeSocket() {
         this.connectionHandler.io.on('startGame', this.startGame);
         this.connectionHandler.io.on('updateTasks', this.updateTasks);
         this.connectionHandler.io.on('doTask', this.doTask);
         this.connectionHandler.io.on('updateTaskBar', this.updateTaskBar);
+        this.connectionHandler.io.on('updateGameRoster', this.updateGameRoster)
     }
 
     // EVENTS
@@ -160,5 +172,21 @@ export class GameManager {
      */
     onUpdateTaskBar(listener: (value: number) => void) {
         this.em.on('updateTaskBar', listener);
+    }
+
+    /**
+     * Called when the client recieves an update to the game roster.
+     * @param listener Event listener. (players: the new game roster).
+     */
+    onUpdateGameRoster(listener: (players: ILightPlayer[]) => void) {
+        this.em.on('updateGameRoster', listener);
+    }
+
+    /**
+     * Called when the local player is killed.
+     * @param listener Event listener.
+     */
+    onLocalPlayerKilled(listener: () => void) {
+        this.em.on('localPlayerKilled', listener);
     }
 }

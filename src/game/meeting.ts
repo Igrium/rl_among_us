@@ -48,7 +48,7 @@ export class Meeting {
         if (this.state === MeetingState.WAITING) {
             console.log(this.presentPlayers);
             for (let player in gameServer.players) {
-                if (!this.presentPlayers[player]) {
+                if (gameServer.players[player].isAlive && !this.presentPlayers[player]) {
                     return;
                 }
             }

@@ -18,9 +18,11 @@ export class VotingScreen extends Component<IProps> {
     
 
     player(player: ILightPlayer) {
-        const { allowVoting } = this.props;
+        let { allowVoting } = this.props;
         let isRed = (this.props.renderImposters && player.isImposter);
         let color;
+
+        if (!player.isAlive) allowVoting = false;
 
         if (isRed) {
             color = player.isAlive ? 'imposter-alive' : 'imposter-dead'

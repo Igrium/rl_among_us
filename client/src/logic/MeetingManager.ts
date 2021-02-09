@@ -41,7 +41,9 @@ export class MeetingManager {
     }
 
     reportBody() {
-        this.cm.io.emit('reportBody');
+        if (this.gm.localPlayer.isAlive) {
+            this.cm.io.emit('reportBody');
+        }
     }
 
     /**

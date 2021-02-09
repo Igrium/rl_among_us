@@ -27,7 +27,7 @@ export class Meeting extends Component<IProps, IState> {
         super(props)
     
         this.state = {
-            meetingState: MeetingState.WAITING,
+            meetingState: props.gameManager.localPlayer.isAlive ? MeetingState.WAITING : MeetingState.PRESENT,
             results: {result: 'TIE', playerVotes: {}}
         }
 
@@ -83,6 +83,7 @@ export class Meeting extends Component<IProps, IState> {
         const { meetingState, results } = this.state;
         const { gameManager } = this.props;
         const renderImposters = gameManager.localPlayer.isImposter;
+        const allowVoting = meetingState === MeetingState.VOTING && gameManager.localPlayer.isAlive;
         if (meetingState === MeetingState.WAITING) {
             return this.attendanceScreen();
         }
@@ -93,7 +94,7 @@ export class Meeting extends Component<IProps, IState> {
             return <ResultsScreen roster={gameManager.players} renderImposters={renderImposters} result={results.result} playerVotes={results.playerVotes}/>
         }
         return (
-            <VotingScreen allowVoting={meetingState === MeetingState.VOTING} roster={gameManager.players} renderImposters={renderImposters} onVote={this.handleVote} />
+            <VotingScreen allowVoting={allowVoting} roster={gameManager.players} renderImposters={renderImposters} onVote={this.handleVote} />
         )
     }
 }

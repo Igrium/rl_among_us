@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import '../../../css/Meeting.css'
 import { GameManager } from '../../../logic/GameManager'
 import ResultsScreen from './ResultsScreen';
 import VotingScreen from './VotingScreen';
@@ -18,7 +19,8 @@ interface IProps {
 
 interface IState {
     meetingState: MeetingState,
-    results: {result: string, playerVotes: Record<string, string>}
+    results: {result: string, playerVotes: Record<string, string>},
+    endTime?: number;
 }
 
 export class Meeting extends Component<IProps, IState> {
@@ -36,18 +38,18 @@ export class Meeting extends Component<IProps, IState> {
     get meetingManager() { return this.props.gameManager.meetingManager }
 
     componentDidMount() {
-        this.meetingManager.onStartDiscussion((endTime: number) => {
+        this.meetingManager.onStartDiscussion((endTime) => {
             console.log(`Discussion started. End time: ${endTime}`)
-            this.setState({ meetingState: MeetingState.DISCUSSION });
+            this.setState({ meetingState: MeetingState.DISCUSSION, endTime: endTime });
         })
 
-        this.meetingManager.onStartVote(() => {
-            this.setState({ meetingState: MeetingState.VOTING });
+        this.meetingManager.onStartVote((endTime) => {
+            this.setState({ meetingState: MeetingState.VOTING, endTime: endTime });
         })
 
         this.meetingManager.onEndVote((data) => {
             console.log(`Vote is complete! Result: ${data.result}`)
-            this.setState( {meetingState: MeetingState.END_VOTE, results: data} )
+            this.setState( { meetingState: MeetingState.END_VOTE, results: data, endTime: undefined } )
         });
     }
     
@@ -80,7 +82,7 @@ export class Meeting extends Component<IProps, IState> {
     }
 
     render() {
-        const { meetingState, results } = this.state;
+        const { meetingState, results, endTime } = this.state;
         const { gameManager } = this.props;
         const renderImposters = gameManager.localPlayer.isImposter;
         const allowVoting = meetingState === MeetingState.VOTING && gameManager.localPlayer.isAlive;
@@ -94,7 +96,7 @@ export class Meeting extends Component<IProps, IState> {
             return <ResultsScreen roster={gameManager.players} renderImposters={renderImposters} result={results.result} playerVotes={results.playerVotes}/>
         }
         return (
-            <VotingScreen allowVoting={allowVoting} roster={gameManager.players} renderImposters={renderImposters} onVote={this.handleVote} />
+            <VotingScreen allowVoting={allowVoting} roster={gameManager.players} renderImposters={renderImposters} onVote={this.handleVote} endTime={endTime} />
         )
     }
 }

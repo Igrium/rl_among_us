@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import { renderIntoDocument } from 'react-dom/test-utils'
 import ILightPlayer from '../../../../../common/ILightPlayer'
+import Timer from '../../util/Timer';
 
 interface IProps {
     allowVoting: boolean
     roster: ILightPlayer[]
-    renderImposters: boolean
+    renderImposters: boolean,
+    endTime?: number,
     onVote: (target: string) => void
 }
 
@@ -47,15 +49,17 @@ export class VotingScreen extends Component<IProps> {
     }
 
     render() {
+        const { roster, allowVoting, endTime } = this.props;
         return (
             <div>
                 <h1>Who is the Imposter?</h1>
                 <ul>
-                    {this.props.roster.map(player => {
+                    {roster.map(player => {
                         return <li key={player.name}>{this.player(player)}</li>
                     })}
                 </ul>
-                {this.props.allowVoting ? <button onClick={this.handleSkip}>Skip Vote</button> : null}
+                {allowVoting ? <button onClick={this.handleSkip}>Skip Vote</button> : null}
+                {endTime ? <Timer endTime={endTime} className={'countdown-timer'}/> : null}
             </div>
         )
     }

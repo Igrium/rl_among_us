@@ -5,6 +5,7 @@ This document outlines the communication protocols between the game server and p
 ---
 
 ## Server -> Client events
+**General**
 
 `disconnectWarning [reason: string]`
 
@@ -50,6 +51,14 @@ This is sent to a client when it's task list is updated. It includes an object w
 
 ---
 
+`updateGameRoster [roster: ILightPlayer[]]`
+
+Contrary to `updateRoster`, this is sent throughout the game when various events happen such as a player getting killed. When recieved, the client should check if the local player has been killed and run the appropriate code accordingly.
+
+`roster`: A list of ILightPlayer objects listing all the players on the server.
+
+---
+
 `doTask [id: string] [callback: function({started: boolean})`
 
 This is sent to the client when the server wants the client to start doing a task. It's usually never called unless the client requested to do that task. It contains a string with the task's ID and a callback function that confirms with the server that the task has been started.
@@ -57,6 +66,46 @@ This is sent to the client when the server wants the client to start doing a tas
 The client should call this function when it recieves this message, regardless of whether it started the task or not. If using socket.io, all of the return connectivity is handled automagically under the hood. 
 
 ---
+
+**Meetings**
+
+`meetingCalled [emergency: boolean]`
+
+Sent to the client when a meeting is called.
+
+`emergency` Whether this is a emergency meeting or not.
+
+---
+
+`startDiscussion [endTime: number]`
+
+Sent when the meeting truely starts and it's time to start talking.
+
+`endTime` The unix time which the timer should be counting down to. This is purely for visual purposes; the server determines when the discussion actually ends and the voting begins.
+
+---
+
+`startVote [endTime: number]`
+
+Sent when discussion is over and it's time to start voting.
+
+`endTime` The unix time which the timer should be counting down to. This is purely for visual purposes; the server determines when the voting actually ends.
+
+---
+
+`endVote [data: {result: string, playerVotes: Record<string, string>}]`
+
+Sent to the client when everyone has voted or the voting period is over. It contains info about the results of the vote.
+
+`result`: "SKIP" if players voted to skip, "TIE" if there was a tie in the vote, or the name of the player who was voted out if there was a single result.
+
+`playerVotes`: A record with all the player names as keys and who they voted for as values ("SKIP" if they voted to skip.)
+
+---
+
+`resumePlay`
+
+A message with no arguements that's sent when meeting time's over and it's time to go back to gameplay.
 
 ## Client -> Server events
 
@@ -81,6 +130,8 @@ Game field computers:
 Obviously, replace "player_name" and "computer_id" with the player name and computer id.
 
 ---
+
+**General**
 
 `setColor [color: string]`
 
@@ -115,3 +166,25 @@ This message lets the server know that the client successfully QR code verified 
 (TESTING ONLY)
 
 This arguement-less command requests that the server start the game. It is used for testing games without the emergency button connected.
+
+---
+
+**Meetings**
+
+`reportBody`
+
+Sent to the server when the player has indicated they wish to report a body and call a meeting.
+
+---
+
+`presentAtMeeting`
+
+This arguement-less command should be called when a player indicates that they've arrived at the meeting location and are ready to talk. Will only be respected if a meeting has been called.
+
+---
+
+`vote [target: string]`
+
+Used to tell the server who a player voted for. Can only be called once per meeting.
+
+`target`: The name of the player who was voted for, or "SKIP" if voting to skip.

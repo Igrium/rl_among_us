@@ -11,6 +11,7 @@ import { taskManifest } from "./game/tasks/taskManifest";
 import { FieldComputerInterface } from "./game/gameField/fieldComputerInterface";
 import { waitingRoom } from "./waitingRoom";
 import ILightPlayer from "../common/ILightPlayer";
+import { Meeting } from "./game/meeting";
 
 const config = require('config');
 
@@ -23,11 +24,13 @@ export module gameServer {
     /** All the field computers connected to the server. <Name, Field Computer Interface> */
     export const fieldComputers: Record<string, FieldComputerInterface> = {};
     
-    
     export const gameConfig = config.get('game');
     export const mapFile = gameUtils.loadMapFile(gameConfig.map);
     /** A library of all the tasks in the map. <ID, Task object> */
     export const tasks: Record<string, BaseTask> = taskManifest.loadTasks(mapFile.tasks);
+    
+    /** The object for the current meeting; undefined if we're not in a meeting. */
+    export let currentMeeting: Meeting | undefined;
 
     let inGame: boolean = false;
 
@@ -107,7 +110,7 @@ export module gameServer {
      */
     export function connectPlayer(client: SocketIO.Socket, connectionInfo: IPlayerConnectionInfo): Player | null {
         let name = connectionInfo.name;
-        if (name in players) {
+        if (name in players || name in constants.bannedNames) {
             app.disconnect(client, constants.disconnectReasons.NAME_EXISTS);
             return null;
         }
@@ -194,5 +197,33 @@ export module gameServer {
         updateTaskBarListeners.push(listener);
     }
 
+    /**
+     * Call a meeting.
+     * @param emergency True if this meeting comes from the emergency button.
+     */
+    export function beginMeeting(emergency: boolean) {
+        if (currentMeeting === undefined && isInGame()) {
+            currentMeeting = new Meeting();
+            currentMeeting.call(emergency);
+            currentMeeting.onEndMeeting(() => {
+                currentMeeting = undefined;
+            })
+        }
+    }
+
+    /**
+     * Kill a player.
+     * @param playerName Player to kill.
+     * @param ejected If this player was ejected in a meeting. 
+     * If false, assumed to be killed by imposter.
+     */
+    export function killPlayer(playerName: string, ejected: boolean) {
+        let player = players[playerName];
+        if (player.isAlive) {
+            player.isAlive = false;
+
+            gameUtils.announce('updateGameRoster', Object.values(gameUtils.generateLightRoster(players)));
+        }
+    }
 }
 

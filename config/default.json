@@ -1,6 +1,9 @@
 {
     "game": {
         "map": "default",
-        "requireVerifyTask": true
+        "requireVerifyTask": true,
+        "discussionTime": 15,
+        "votingTime": 45
+
     }
 }

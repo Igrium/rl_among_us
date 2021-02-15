@@ -17,3 +17,34 @@
     outline: 1px solid gray;
     display: 'inline-block';
 }
+
+.crewmate-alive {
+    color: black;
+}
+
+.crewmate-dead {
+    color: grey;
+}
+
+.imposter-alive {
+    color: red;
+}
+
+.imposter-dead {
+    color: #7a312d;
+}
+
+.voting-player {
+    font-weight: bold;
+}
+
+
+/* Placeholder */
+
+.dot {
+    height: 25px;
+    width: 25px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+  }

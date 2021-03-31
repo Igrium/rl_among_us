@@ -124,7 +124,8 @@ Game field computers:
 ```json
 {
     "connectionType": "gameField",
-    "id": "computer_id"
+    "id": "computer_id",
+    "interfaceClass": "(optional) interface class name"
 }
 ```
 Obviously, replace "player_name" and "computer_id" with the player name and computer id.

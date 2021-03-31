@@ -41,7 +41,7 @@ io.on('connect', (socket: SocketIO.Socket) => {
         } else if (connectionType === 'gameField') {
             // Connect as game field computer.
             if (typeof connectionInfo.id === 'string') {
-                return gameServer.connectFieldComputer(socket, connectionInfo.id);
+                return gameServer.connectFieldComputer(socket, connectionInfo.id, connectionInfo.interfaceClass);
             }
     }
     return app.disconnect(socket, disconnectReasons.ILLEGAL_ARGS);
@@ -58,7 +58,7 @@ export module app {
      * @param reason Reason for disconnection (found in constants.disconnectReasons)
      */
     export function disconnect(socket: SocketIO.Socket, reason: String) {
-        socket.send('disconnectWarning', {reason: reason});
+        socket.emit('disconnectWarning', {reason: reason});
         console.log(`Client ${socket.id} disconnected for reason: ${reason}`)
         socket.disconnect();
     }

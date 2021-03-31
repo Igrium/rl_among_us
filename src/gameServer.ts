@@ -12,6 +12,9 @@ import { FieldComputerInterface } from "./game/gameField/fieldComputerInterface"
 import { waitingRoom } from "./waitingRoom";
 import ILightPlayer from "../common/ILightPlayer";
 import { Meeting } from "./game/meeting";
+import { fieldComputerManifest } from "./game/gameField/fieldComputerManifest";
+import { EventEmitter } from "events";
+import { IMapFile } from "../common/IMapFile";
 
 const config = require('config');
 
@@ -39,9 +42,10 @@ export module gameServer {
      */
     let taskBar: number = 0;
 
+    let emitter = new EventEmitter();
+
     // Listeners
-    const startGameListeners: Array<() => void> = [];
-    const updateTaskBarListeners: Array<(taskBar: number) => void> = [];
+
 
 
     /**
@@ -70,23 +74,25 @@ export module gameServer {
             }        
         }
 
+        let args = {
+            roster: Object.values(roster),
+            gameConfig: gameConfig,
+            mapInfo: mapFile
+        }
+
         // Initialize players and tell clients to start.
         for (let key in players) {
             let player = players[key];
             let tasks = gameUtils.assignTasks(mapFile.tasks, 5);
             player.startGame(roster[player.name].isImposter, tasks); // TODO: choose tasks.
-            player.client.emit('startGame', {
-                roster: Object.values(roster),
-                gameConfig: gameConfig,
-                mapInfo: mapFile
-            }) // TODO: implement gameInfo and mapInfo.
+            player.client.emit('startGame', args) // TODO: implement gameInfo and mapInfo.
             player.updateTasks();
         }
         updateTaskBar();
 
         // TODO Implement other game start code.
         
-        startGameListeners.forEach((listener) => listener());
+        emitter.emit('startGame', args);
     }
 
     /**
@@ -129,8 +135,12 @@ export module gameServer {
      * @param interfaceClass The class of the field computer interface to use.
      */
     export function connectFieldComputer(socket: SocketIO.Socket, id: string, interfaceClass?: string): void {
-        // TODO: implement use of multiple classes.
-        gameServer.fieldComputers[id] = new FieldComputerInterface(socket, id);
+
+        if (id in gameServer.fieldComputers) {
+            app.disconnect(socket, constants.disconnectReasons.NAME_EXISTS);
+        }
+
+        gameServer.fieldComputers[id] = fieldComputerManifest.createFieldComputerInterface(socket, id, interfaceClass);
         console.log(`Game field computer connected: ${id}`);
     }
 
@@ -168,7 +178,7 @@ export module gameServer {
             player.client.emit('updateTaskBar', taskBar);
         }
 
-        updateTaskBarListeners.forEach((listener) => listener(taskBar));
+        emitter.emit('updateTaskBar');
     }
     
     /**
@@ -176,25 +186,6 @@ export module gameServer {
      */
     export function isInGame(): boolean {
         return inGame;
-    }
-
-    /**
-     * Register a listener for the game start event.
-     * @param listener Listener function.
-     */
-    export function onGameStart(listener: () => void): void {
-        startGameListeners.push(listener);
-    }
-    
-    /**
-     * Register a listener for the update task bar event.
-     * 
-     * This event fires at the beginning of the game, when a client completes a task,
-     * and when updateTaskBar() is called.
-     * @param listener Listener function.
-     */
-    export function onUpdateTaskBar(listener: (taskBar: number) => void): void {
-        updateTaskBarListeners.push(listener);
     }
 
     /**
@@ -206,8 +197,10 @@ export module gameServer {
             currentMeeting = new Meeting();
             currentMeeting.call(emergency);
             currentMeeting.onEndMeeting(() => {
+                emitter.emit('endMeeting', currentMeeting);
                 currentMeeting = undefined;
             })
+            emitter.emit('beginMeeting', currentMeeting);
         }
     }
 
@@ -224,6 +217,33 @@ export module gameServer {
 
             gameUtils.announce('updateGameRoster', Object.values(gameUtils.generateLightRoster(players)));
         }
+    }
+    
+    /**
+     * Register a listener for the game start event.
+     * @param listener Listener function.
+     */
+    export function onGameStart(listener: (args: {roster: ILightPlayer[], gameConfig: any, mapInfo: IMapFile}) => void): void {
+        emitter.on('startGame', listener);
+    }
+
+    /**
+     * Register a listener for the update task bar event.
+     * 
+     * This event fires at the beginning of the game, when a client completes a task,
+     * and when updateTaskBar() is called.
+     * @param listener Listener function.
+     */
+    export function onUpdateTaskBar(listener: (taskBar: number) => void): void {
+        emitter.on('updateTaskBar', listener);
+    }
+
+    export function onBeginMeeting(listener: (meeting: Meeting) => void): void {
+        emitter.on('beginMeeting', listener);
+    }
+
+    export function onEndMeeting(listener: (meeting: Meeting) => void): void {
+        emitter.on('endMeeting', listener);
     }
 }
 

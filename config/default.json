@@ -3,7 +3,7 @@
         "map": "default",
         "requireVerifyTask": true,
         "discussionTime": 15,
-        "votingTime": 45
-
+        "votingTime": 45,
+        "emergencyCooldown": 20
     }
 }

@@ -1,6 +1,8 @@
+import { gameServer } from "../../gameServer";
+
 /**
  * Interface class for game field computers.
- * May be extended to provide non task-related functionallity.
+ * May be extended to provide non task-related functionallity server-side.
  */
 export class FieldComputerInterface {
     /**
@@ -20,5 +22,10 @@ export class FieldComputerInterface {
     constructor(client: SocketIO.Socket, id: string) {
         this.client = client;
         this.id = id;
+ 
+        gameServer.onGameStart((args) => {
+            client.emit('startGame', args);
+        }) 
     }
+    
 }

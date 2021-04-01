@@ -67,6 +67,22 @@ The client should call this function when it recieves this message, regardless o
 
 ---
 
+`sabotage [id: string]`
+
+Sent to all clients when a sabotage begins.
+
+`id` The ID of the sabotage.
+
+---
+
+`endSabotage [id: string]`
+
+Sent to all clients when a sabotage is complete.
+
+`id` The ID of the sabotage.
+
+---
+
 **Meetings**
 
 `meetingCalled [emergency: boolean]`

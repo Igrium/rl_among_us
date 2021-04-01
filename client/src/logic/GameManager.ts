@@ -19,7 +19,8 @@ export class GameManager {
     gameConfig: any = {};
     mapInfo: IMapFile = {
         mapImage: '',
-        tasks: []
+        tasks: [],
+        sabotages: []
     };
 
     /**

@@ -4,6 +4,8 @@ export interface IMapFile {
 
     /** All the tasks in the map. */
     tasks: ITask[]
+    
+    sabotages: ISabotage[]
 }
 
 export interface ITask {
@@ -13,4 +15,12 @@ export interface ITask {
     icon: string,
     requireConfirmationScan: boolean,
     params: any
+}
+
+/**
+ * Represents a map sabotage. Note: this is the sabotage itself, not the "fixing stations."
+ */
+export interface ISabotage {
+    id: string,
+    classID: string
 }

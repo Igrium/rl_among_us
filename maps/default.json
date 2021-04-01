@@ -17,5 +17,11 @@
             "requireConfirmationScan": true,
             "params": {"mode": "upload"}
         }
+    ],
+    "sabotages": [
+        {
+            "id": "sabotage1",
+            "classID": "basic"
+        }
     ]
 }

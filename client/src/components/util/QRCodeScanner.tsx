@@ -1,51 +1,71 @@
-import React, { Component } from 'react'
+import React, { Component } from "react"
+import QrReader from "react-qr-reader"
 
 interface IProps {
-    onScan: (value?: string) => void
-    displayText?: string
+  onScan: (value?: string) => void
+  displayText?: string
 }
 
-interface IState {
-    textValue: string
-}
+export class QRCodeScanner extends Component<IProps> {
 
-export class QRCodeScanner extends Component<IProps, IState> {
-    constructor(props: IProps) {
-        super(props);
-    
-        this.state = {
-            textValue: ''
-        }
-    }
+  constructor(props: IProps) {
+    super(props);
+  }
 
-    handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ textValue: event.target.value });
-    }
+  handleClose = () => {
+    this.props.onScan("");
+  }
 
-    handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        this.props.onScan(this.state.textValue);
-    }
+  handleScan = (data: any) => {
+    if (data) this.props.onScan(data);
+  }
+  handleError = (err: any) => {
+    console.error(err);
+    // TODO: Handle error
+  }
 
-    handleClose = () => {
-        this.props.onScan('');
-    }
+  openImageDialog() {
+    // @ts-ignore
+    this.ref.openImageDialog();
+  }
 
-    render() {
-        return (
-            <div>
-                <button className='CloseButton' onClick={this.handleClose}>X</button>
-                <form onSubmit={this.handleSubmit}>
-                    <h2>{this.props.displayText}</h2>
-                    <label>Enter QR Code Text</label>
-                    <br />
-                    <input type='text' value={this.state.textValue} onChange={this.handleTextChange}></input>
-                    <br />
-                    <button type='submit'>Submit</button>
-                </form>
-            </div>
-        )
-    }
+  private isIOS() {
+    return [
+      "iPad Simulator",
+      "iPhone Simulator",
+      "iPod Simulator",
+      "iPad",
+      "iPhone",
+      "iPod"
+    ].includes(navigator.platform)
+    // iPad on iOS 13 detection
+    || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+  }
+
+  renderButton() {
+    // TODO: Waiting for answer in issue: https://github.com/JodusNodus/react-qr-reader/issues/194
+    return (
+      <input type="button" value="Make a picture" onClick={() => {alert("Need to add this!")}} />
+    )
+  }
+
+  render() {
+    return (
+      <div>
+        <button className='CloseButton' onClick={this.handleClose}>X</button>
+        <h2>{this.props.displayText}</h2>
+
+        <QrReader
+          delay={300}
+          onError={this.handleError}
+          onScan={this.handleScan}
+          style={{ width: "100%" }}
+          legacyMode={this.isIOS()}
+        />
+        {this.isIOS() ? this.renderButton() : ""}
+      </div>
+    )
+  }
 }
 
 export default QRCodeScanner

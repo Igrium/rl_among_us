@@ -9,7 +9,7 @@ The codebase is not nearly developed enough for an actual game yet. Subscribe to
 If you envision a feature that you wish the codebase had, or you see a mistake in our programming that you think you can fix, feel free to make a pull request. It will likely get accepted. You can also join the [Discord server](https://discord.gg/kyC8StMjbf) if you want to be more involved.
 
 ## Setting up
-To set Real Life Among Us up, first make sure you have [NodeJS](https://nodejs.org/en/) installed. After that, clone this repository. Then run `npm i` and `npm ci`. After that, you're ready to start developing or running the project!<br>
+To set Real Life Among Us up, first make sure you have [NodeJS](https://nodejs.org/en/) installed. After that, clone this repository. Then run `npm i`, `npm ci` and `npm i --include=dev`. After that, you're ready to start developing or running the project!<br>
 * **Development:** Run `npm run dev`
 * **Production:** _The code isn't ready for production yet!_
 

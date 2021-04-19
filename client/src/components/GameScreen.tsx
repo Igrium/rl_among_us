@@ -5,7 +5,6 @@ import { GameManager } from '../logic/GameManager'
 import TaskWindow from './gameplay/TaskWindow'
 import { ITask } from '../../../common/IMapFile'
 import QRCodeScanner from './util/QRCodeScanner'
-import VideoDisplay from "./util/VideoDisplay"
 
 import 'reactjs-popup/dist/index.css'
 import Meeting from './gameplay/meeting/Meeting'
@@ -17,8 +16,7 @@ interface IState {
   gameState: GameState,
   taskID: string,
   scannerOpen: boolean,
-  scannerMode: ScannerMode,
-  rickroll: boolean
+  scannerMode: ScannerMode
 };
 
 export enum GameState {
@@ -41,8 +39,7 @@ class GameScreen extends Component<IProps, IState> {
       gameState: GameState.GAMEPLAY,
       taskID: '',
       scannerOpen: false,
-      scannerMode: ScannerMode.SCAN_TASK,
-      rickroll: false
+      scannerMode: ScannerMode.SCAN_TASK
     }
   }
 
@@ -66,8 +63,6 @@ class GameScreen extends Component<IProps, IState> {
   }
 
   private handleScan = (value?: string) => {
-    if (value === "https://www.youtube.com/watch?v=dQw4w9WgXcQ") return this.setState({ rickroll: true, scannerOpen: false });
-
     if (this.state.scannerMode === ScannerMode.VERIFY_TASK) {
       this.props.gameManager.completeTask(!(value === this.state.taskID));
       this.setState({ scannerMode: ScannerMode.SCAN_TASK });
@@ -125,23 +120,9 @@ class GameScreen extends Component<IProps, IState> {
     )
   }
 
-  private getRickRollWindow() {
-    return (
-      <Popup modal defaultOpen closeOnDocumentClick={false} closeOnEscape={false}>
-        <VideoDisplay onExit={this.stopRickRoll} url="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" />
-      </Popup>
-    )
-  }
-
   private getMeetingWindow() {
     const meetingWindow = <Meeting gameManager={this.props.gameManager} />;
     return <Popup modal defaultOpen closeOnDocumentClick={false} closeOnEscape={false} contentStyle={{ width: 'max-content' }}>{meetingWindow}</Popup>
-  }
-
-  private stopRickRoll() {
-    this.setState({
-      rickroll: false
-    });
   }
 
   render() {
@@ -154,7 +135,6 @@ class GameScreen extends Component<IProps, IState> {
         {gameState === GameState.TASK ? this.getTaskWindow() : null}
         {gameState === GameState.MEETING ? this.getMeetingWindow() : null}
         {scannerOpen ? this.getScanWindow() : null}
-        {this.state.rickroll ? this.getRickRollWindow() : ""}
       </div>
     )
   }

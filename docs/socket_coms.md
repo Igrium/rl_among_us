@@ -178,6 +178,14 @@ Additionally, this message should also be sent if the client aborts the task for
 This message lets the server know that the client successfully QR code verified the task it was doing. Unless `canceled` = `true`. Then it means that the QR code verification failed.
 
 ---
+
+`callSabotage [sabotageID: string]`
+
+Tells the server to call a sabotage. Only respected if the client is an imposter.
+
+`sabotageID` The ID of the sabotage on the map.
+
+---
 `startGame` 
 
 (TESTING ONLY)

@@ -22,5 +22,6 @@ export interface ITask {
  */
 export interface ISabotage {
     id: string,
-    classID: string
+    classID: string,
+    prettyName?: string
 }

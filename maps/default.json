@@ -21,7 +21,8 @@
     "sabotages": [
         {
             "id": "sabotage1",
-            "classID": "basic"
+            "classID": "basic",
+            "prettyName": "Sabotage 1"
         }
     ]
 }

@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import Popup from 'reactjs-popup'
 import ILightPlayer from '../../../../common/ILightPlayer'
+import { ISabotage } from '../../../../common/IMapFile'
 import { GameManager } from '../../logic/GameManager'
 import PlayerList from '../testing/PlayerList'
+import { PopoutList } from '../util/PopoutList'
 import TaskList from './tasks/TaskList'
 
 interface IProps {
@@ -61,6 +63,8 @@ export class Gameplay extends Component<IProps, IState> {
 
                 {/* Report button */}
                 {this.props.gameManager.localPlayer.isAlive ? this.reportButton() : null}
+
+                {this.props.gameManager.localPlayer.isImposter ? this.sabotageButton() : null}
                 
             </div>
         )
@@ -78,6 +82,32 @@ export class Gameplay extends Component<IProps, IState> {
                 )}
             </Popup>
         )
+    }
+
+    sabotageButton() {
+        const sabotages = this.props.gameManager.mapInfo.sabotages
+        const names = sabotages.map((sabotage) => {return sabotage.prettyName === undefined ? sabotage.id : sabotage.prettyName});
+
+        const onSelect = (selected: string) => {
+
+            for (let i = 0; i < sabotages.length; i++) {
+                const sabotage = sabotages[i];
+                if (sabotage.prettyName === selected || sabotage.id === selected) {
+                    this.callSabotage(sabotage);
+                    return;
+                }
+            }
+        }
+
+        return (
+            <Popup trigger={<button>Sabotage</button>} modal>
+                <PopoutList entries={names} onSelected={onSelect}/>
+            </Popup>
+        )
+    }
+    
+    callSabotage = (sabotage: ISabotage) => {
+        this.props.gameManager.callSabotage(sabotage.id);
     }
 }
 

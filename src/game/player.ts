@@ -61,7 +61,7 @@ export class Player {
      * @param ejected Was the player ejected in a meeting?
      */
     kill(ejected: boolean) {
-
+        this.isAlive = false;
     }
 
     /**
@@ -151,6 +151,12 @@ export class Player {
         this.client.on('reportBody', () => {
             if (gameServer.isInGame()) {
                 gameServer.beginMeeting(false);
+            }
+        })
+
+        this.client.on('callSabotage', (id: string) => {
+            if (gameServer.isInGame() && this.isImposter) {
+                gameServer.sabotage(id);
             }
         })
     }

@@ -93,6 +93,10 @@ export class GameManager {
         this.connectionHandler.io.emit('taskComplete', {'canceled': canceled})
     }
 
+    callSabotage(sabotageID: string) {
+        this.connectionHandler.io.emit('callSabotage', sabotageID);
+    }
+
     protected startGame = (data: {roster: ILightPlayer[], gameConfig: any, mapInfo: IMapFile}) => {
         console.log('Starting game...')
         const { roster, gameConfig, mapInfo } = data;

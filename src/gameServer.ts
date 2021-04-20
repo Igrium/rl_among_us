@@ -219,7 +219,7 @@ export module gameServer {
     export function killPlayer(playerName: string, ejected: boolean) {
         let player = players[playerName];
         if (player.isAlive) {
-            player.isAlive = false;
+            player.kill(ejected)
 
             gameUtils.announce('updateGameRoster', Object.values(gameUtils.generateLightRoster(players)));
         }
@@ -245,6 +245,8 @@ export module gameServer {
         if (id in sabotages) {
             let sabotage = sabotages[id];
             sabotage.beginSabatoge();
+        } else {
+            console.warn(`Sabotage ${id} does not exist in the map!`);
         }
     }
     

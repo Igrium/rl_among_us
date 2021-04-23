@@ -9,6 +9,7 @@
     "client": "cd client && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "build": "tsc -p . && tsc -p ./client"
+
   },
   "repository": {
     "type": "git",

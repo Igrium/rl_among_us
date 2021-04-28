@@ -28,7 +28,7 @@ export abstract class BaseSabotage {
     /**
      * Called to begin the sabotage
      */
-    beginSabatoge() {
+    beginSabotage() {
         this.emitter.emit('begin');
         gameUtils.announce('sabotage', this.getLightSabotage());
         console.log(`Starting sabotage: ${this.id}`);
@@ -44,8 +44,8 @@ export abstract class BaseSabotage {
         this.emitter.on('begin', listener);
     }
 
-    onEnd(listenner: () => void) {
-        this.emitter.on('end', listenner);
+    onEnd(listener: () => void) {
+        this.emitter.on('end', listener);
     }
 
     /** Whether this sabotage should set off the alarm. */

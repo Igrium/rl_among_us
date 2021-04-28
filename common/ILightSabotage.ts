@@ -9,6 +9,8 @@ interface ILightSabotage {
 
     /** Whether to trigger the alarm */
     isCritical: boolean;
+
+    timeout?: number;
 }
 
 export default ILightSabotage

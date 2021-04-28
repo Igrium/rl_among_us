@@ -24,10 +24,11 @@ export class EmergencyButtonInterface extends FieldComputerInterface {
     
     private buttonPressed = () => {
         if (gameServer.isInGame()) {
-            this.em.emit('buttonPressed');
             if (Date.now() > this.emergencyCooldownDate && gameServer.activeSabotages.length === 0) {
                 gameServer.beginMeeting(true);
             }
+            this.em.emit('buttonPressed');
+
         } else {
             gameServer.startGame();
         }

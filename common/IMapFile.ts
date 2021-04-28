@@ -25,4 +25,5 @@ export interface ISabotage {
     classID: string,
     prettyName?: string
     fixLocations: [number, number][]
+    timeout?: number
 }

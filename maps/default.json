@@ -24,6 +24,12 @@
             "classID": "basic",
             "prettyName": "Sabotage 1",
             "fixLocations": []
+        },
+        {
+            "id": "timed1",
+            "classID": "timedSabotage",
+            "prettyName": "Timed 1",
+            "fixLocations": []
         }
     ]
 }

@@ -5,8 +5,8 @@ import { BaseSabotage } from "./baseSabotage";
  */
 export class BasicSabotage extends BaseSabotage {
 
-    beginSabatoge() {
-        super.beginSabatoge();
+    beginSabotage() {
+        super.beginSabotage();
         setTimeout(() => {
             this.endSabotage();
         }, 10000);

@@ -244,7 +244,7 @@ export module gameServer {
     export function sabotage(id: string) {
         if (id in sabotages) {
             let sabotage = sabotages[id];
-            sabotage.beginSabatoge();
+            sabotage.beginSabotage();
         } else {
             console.warn(`Sabotage ${id} does not exist in the map!`);
         }

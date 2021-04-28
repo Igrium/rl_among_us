@@ -16,7 +16,8 @@ interface IProps {
 interface IState {
     tasks: Record<string, boolean>,
     taskBar: number,
-    players: ILightPlayer[]
+    players: ILightPlayer[],
+    criticalSabotage: boolean
 }
 
 export class Gameplay extends Component<IProps, IState> {
@@ -26,7 +27,8 @@ export class Gameplay extends Component<IProps, IState> {
         this.state = {
             tasks: props.gameManager.tasks,
             taskBar: 0,
-            players: props.gameManager.players
+            players: props.gameManager.players,
+            criticalSabotage: false
         }
     }
     
@@ -42,6 +44,19 @@ export class Gameplay extends Component<IProps, IState> {
         this.props.gameManager.onUpdateGameRoster((players) => {
             this.setState({ players: players });
         })
+        
+        this.props.gameManager.sabotageManager.onSabotage((sabotage) => {
+            if (sabotage.isCritical) {
+                this.setState({ criticalSabotage: true });
+                console.log('setting sabotage state');
+            }
+        })
+
+        this.props.gameManager.sabotageManager.onEndSabotage((sabotage) => {
+            if (sabotage.isCritical) {
+                this.setState({ criticalSabotage: false });
+            }
+        })
     }
 
     handleRequestTask = () => {
@@ -54,7 +69,7 @@ export class Gameplay extends Component<IProps, IState> {
 
     render() {
         return (
-            <div>
+            <div style={{backgroundColor: this.state.criticalSabotage ? 'red': 'white'}}>
                 <h1>Gameplay Screen</h1>
                 <PlayerList players={this.state.players} />
                 <p>Task completion: {this.state.taskBar * 100}%</p>

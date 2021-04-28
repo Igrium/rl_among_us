@@ -22,7 +22,8 @@
         {
             "id": "sabotage1",
             "classID": "basic",
-            "prettyName": "Sabotage 1"
+            "prettyName": "Sabotage 1",
+            "fixLocations": []
         }
     ]
 }

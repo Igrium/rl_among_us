@@ -12,5 +12,8 @@ export class BasicSabotage extends BaseSabotage {
         }, 10000);
     }
 
+    isCritical(): boolean {
+        return false;
+    }
 
 }

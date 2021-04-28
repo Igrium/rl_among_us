@@ -67,11 +67,11 @@ The client should call this function when it recieves this message, regardless o
 
 ---
 
-`sabotage [id: string]`
+`sabotage [sabotage: ILightSabotage]`
 
 Sent to all clients when a sabotage begins.
 
-`id` The ID of the sabotage.
+`sabotage` The sabotage info.
 
 ---
 

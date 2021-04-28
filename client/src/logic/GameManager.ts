@@ -3,6 +3,7 @@ import ConnectionHandler from "./ConnectionHandler";
 import ILightPlayer from "../../../common/ILightPlayer";
 import { IMapFile, ITask } from "../../../common/IMapFile";
 import { MeetingManager } from "./MeetingManager";
+import { SabatogeManager } from "./sabotages/SabotageManager";
 
 export enum GameState {
     Gameplay,
@@ -14,6 +15,7 @@ export class GameManager {
     private connectionHandler: ConnectionHandler;
 
     public readonly meetingManager: MeetingManager;
+    public readonly sabotageManager: SabatogeManager;
 
     players: ILightPlayer[] = [];
     gameConfig: any = {};
@@ -35,6 +37,7 @@ export class GameManager {
         this.connectionHandler = connectionHandler;
         this.initializeSocket()
         this.meetingManager = new MeetingManager(this, connectionHandler);
+        this.sabotageManager = new SabatogeManager(this, connectionHandler);
     }
     
     /**

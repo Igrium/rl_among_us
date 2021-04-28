@@ -14,7 +14,7 @@ export module sabotageManifest {
 
     function loadSabotage(sabotage: ISabotage): BaseSabotage {
         // REGISTER TASKS HERE
-        if (sabotage.classID === 'basic') {return new BasicSabotage(sabotage.id)}
+        if (sabotage.classID === 'basic') {return new BasicSabotage(sabotage)}
 
         throw new Error(`${sabotage.classID} is not a sabotage type!`);
     }

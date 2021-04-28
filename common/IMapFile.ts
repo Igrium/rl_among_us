@@ -24,4 +24,5 @@ export interface ISabotage {
     id: string,
     classID: string,
     prettyName?: string
+    fixLocations: [number, number][]
 }

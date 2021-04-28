@@ -1,4 +1,6 @@
 import { EventEmitter } from "events";
+import ILightSabotage from "../../../common/ILightSabotage";
+import { ISabotage } from "../../../common/IMapFile";
 import { gameUtils } from "../gameUtils";
 
 /**
@@ -13,10 +15,14 @@ export abstract class BaseSabotage {
     /** The ID of the sabotage on the map. */
     public readonly id: string
 
+    /** The sabotage's definition in the map file. */
+    public readonly definition: ISabotage;
+
     private emitter = new EventEmitter();
 
-    constructor(id: string) {
-        this.id = id;
+    constructor(definition: ISabotage) {
+        this.id = definition.id;
+        this.definition = definition;
     }
 
     /**
@@ -24,7 +30,7 @@ export abstract class BaseSabotage {
      */
     beginSabatoge() {
         this.emitter.emit('begin');
-        gameUtils.announce('sabotage', this.id);
+        gameUtils.announce('sabotage', this.getLightSabotage());
         console.log(`Starting sabotage: ${this.id}`);
     }
 
@@ -40,5 +46,19 @@ export abstract class BaseSabotage {
 
     onEnd(listenner: () => void) {
         this.emitter.on('end', listenner);
+    }
+
+    /** Whether this sabotage should set off the alarm. */
+    abstract isCritical(): boolean;
+
+    /**
+     * Get an ILightSabotage representation of this sabotage.
+     */
+    getLightSabotage(): ILightSabotage {
+        return {
+            id: this.id,
+            fixLocations: this.definition.fixLocations,
+            isCritical: this.isCritical()
+        }
     }
 }

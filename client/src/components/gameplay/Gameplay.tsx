@@ -48,7 +48,6 @@ export class Gameplay extends Component<IProps, IState> {
         this.props.gameManager.sabotageManager.onSabotage((sabotage) => {
             if (sabotage.isCritical) {
                 this.setState({ criticalSabotage: true });
-                console.log('setting sabotage state');
             }
         })
 

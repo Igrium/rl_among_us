@@ -45,7 +45,7 @@ export class SabatogeManager {
 
         console.log(`Starting sabotage ${id}`);
         this.activeSabotages[id] = sabotage;
-        this.em.emit('sabotage', id);
+        this.em.emit('sabotage', sabotage);
     }
 
     private endSabotage = (id: string) => {

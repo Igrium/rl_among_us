@@ -4,7 +4,7 @@
   "description": "Server code for TaterCraft's real life Among Us game",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/app.js",
+    "start": "node dist/src/app.js",
     "server": "nodemon src/app.ts",
     "client": "cd client && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",

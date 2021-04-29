@@ -23,7 +23,15 @@ export interface ITask {
 export interface ISabotage {
     id: string,
     classID: string,
-    prettyName?: string
-    fixLocations: [number, number][]
+    prettyName?: string,
+    fixLocations: ISabotageFix[],
     timeout?: number
+}
+
+export interface ISabotageFix {
+    /** Cannot match a task ID */ 
+    id: string ,
+    classID: string,
+    coords: [number, number],
+    params: any
 }

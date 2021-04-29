@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
 import ILightSabotage from "../../../../common/ILightSabotage";
+import { ISabotage } from "../../../../common/IMapFile";
 import ConnectionHandler from "../ConnectionHandler";
 import { GameManager } from "../GameManager";
 
@@ -34,6 +35,7 @@ export class SabatogeManager {
 
         io.on('sabotage', this.sabotage);
         io.on('endSabotage', this.endSabotage);
+        io.on('doSabotageFix', this.doSabotageFix);
     }
 
     private sabotage = (sabotage: ILightSabotage) => {
@@ -60,6 +62,36 @@ export class SabatogeManager {
         }
     }
 
+    private doSabotageFix = (id: string) => {
+        this.em.emit('doSabotageFix', id);
+    }
+
+    /**
+     * Notify the server that the client has (partially) fixed a sabotage.
+     * @param id Sabotage fix ID.
+     */
+    public sabotageFix(id: string) {
+        this.cm.io.emit('sabotageFix', id);
+    }
+
+    /**
+     * Load a sabotage fix from the map file.
+     * @param id Sabotage fix ID.
+     */
+    public getSabotageFix(id: string) {
+        const mapInfo = this.gm.mapInfo;
+        for (let sabotage of mapInfo.sabotages) {
+            let sabotageFix = sabotage.fixLocations.find(fix => fix.id === id);
+            if (sabotageFix !== undefined) return sabotageFix;
+        }
+    }
+
+    public getSabotageFixSafe(id: string) {
+        const sabotageFix = this.getSabotageFix(id);
+        if (sabotageFix === undefined) throw `No sabotage fix of ID ${id}`
+        return sabotageFix;
+    }
+
     /**
      * Called when a sabotage begins.
      * @param listener Event listener.
@@ -74,5 +106,9 @@ export class SabatogeManager {
      */
     public onEndSabotage(listener: (sabotage: ILightSabotage) => void) {
         this.em.on('endSabotage', listener);
+    }
+
+    public onDoSabotageFix(listener: (id: string) => void) {
+        this.em.on('doSabotageFix', listener);
     }
 }

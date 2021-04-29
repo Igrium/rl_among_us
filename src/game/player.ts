@@ -1,3 +1,4 @@
+import e from "express";
 import { Socket } from "socket.io";
 import { gameServer } from "../gameServer";
 import { waitingRoom } from "../waitingRoom";
@@ -129,7 +130,17 @@ export class Player {
         this.client.on('requestTask', (id) => {
             if (gameServer.isInGame()) {
                 console.log(`${this.name} requested task: ${id}.`)
-                this.beginTask(id);
+
+                if (gameServer.tasks[id]) this.beginTask(id);
+                // Sabotage fix
+                else {
+                    gameServer.activeSabotages.forEach((sabotageID) => {
+                        const sabotage = gameServer.sabotages[sabotageID];
+                        if (sabotage.definition.fixLocations.find(sabotageFix => sabotageFix.id === id) !== undefined) {
+                            this.client.emit('doSabotageFix', id);
+                        }
+                    })
+                }
             }
         }) 
         

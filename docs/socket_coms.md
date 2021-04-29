@@ -83,6 +83,14 @@ Sent to all clients when a sabotage is complete.
 
 ---
 
+`doSabotageFix [id: sabotageFixID]`
+
+Tell the client to begin a sabotage fix.
+
+`id`: ID of the sabotage fix.
+
+---
+
 **Meetings**
 
 `meetingCalled [emergency: boolean]`
@@ -184,6 +192,14 @@ This message lets the server know that the client successfully QR code verified 
 Tells the server to call a sabotage. Only respected if the client is an imposter.
 
 `sabotageID` The ID of the sabotage on the map.
+
+---
+
+`sabotageFix [sabotageFixID: string]`
+
+Called when the client has completed a sabotage fix.
+
+`sabotageFixID`: The ID of the sabotage fix on the map. The server decides what to do with this.
 
 ---
 `startGame` 

@@ -29,7 +29,14 @@
             "id": "timed1",
             "classID": "timedSabotage",
             "prettyName": "Timed 1",
-            "fixLocations": []
+            "fixLocations": [
+                {
+                    "id": "timed1_fix",
+                    "classID": "basic",
+                    "coords": [1,1],
+                    "params": {}
+                }
+            ]
         }
     ]
 }

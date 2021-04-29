@@ -100,6 +100,10 @@ export class GameManager {
         this.connectionHandler.io.emit('callSabotage', sabotageID);
     }
 
+    reportKilled() {
+        this.connectionHandler.io.emit('killed');
+    }
+
     protected startGame = (data: {roster: ILightPlayer[], gameConfig: any, mapInfo: IMapFile}) => {
         console.log('Starting game...')
         const { roster, gameConfig, mapInfo } = data;

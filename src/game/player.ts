@@ -191,5 +191,11 @@ export class Player {
                 this.sabotageFix(id);
             }
         })
+
+        this.client.on('killed', () => {
+            if (gameServer.isInGame() && this.isAlive) {
+                gameServer.killPlayer(this.name, false);
+            }
+        })
     }
 }

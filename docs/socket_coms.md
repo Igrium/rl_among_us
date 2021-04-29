@@ -202,6 +202,12 @@ Called when the client has completed a sabotage fix.
 `sabotageFixID`: The ID of the sabotage fix on the map. The server decides what to do with this.
 
 ---
+
+`killed`
+
+Used to self-report to the server that the local player has been killed.
+
+---
 `startGame` 
 
 (TESTING ONLY)

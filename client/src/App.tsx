@@ -49,6 +49,10 @@ class App extends Component<IProps, IState> {
         })
     }
 
+    handleEndGame = () => {
+        this.setState({ isInGame: false });
+    }
+
     render() {
         if (!this.state.isConnected) {
             // Log in screen
@@ -66,13 +70,13 @@ class App extends Component<IProps, IState> {
             )
         } else {
             // Game screen
-            if (this.gameManager == undefined) {
+            if (this.gameManager === undefined) {
                 alert("App is connected without a game manager. This should not be able to happen.")
                 return <div className="app"></div>;
             }
             else return (
                 <div className="app">
-                <GameScreen gameManager={this.gameManager}/>
+                <GameScreen gameManager={this.gameManager} onGameFinished={this.handleEndGame}/>
                 </div>
             )
         }

@@ -54,8 +54,8 @@ class TimedSabotage extends BaseSabotage {
     }
 
     end() {
-        console.log("If the round system was implemented, the imposter would have won.")
         this.endSabotage();
+        gameServer.endGame(true);
     }
     
 }

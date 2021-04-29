@@ -17,5 +17,26 @@
             "requireConfirmationScan": true,
             "params": {"mode": "upload"}
         }
+    ],
+    "sabotages": [
+        {
+            "id": "sabotage1",
+            "classID": "basic",
+            "prettyName": "Sabotage 1",
+            "fixLocations": []
+        },
+        {
+            "id": "timed1",
+            "classID": "timedSabotage",
+            "prettyName": "Timed 1",
+            "fixLocations": [
+                {
+                    "id": "timed1_fix",
+                    "classID": "basic",
+                    "coords": [1,1],
+                    "params": {}
+                }
+            ]
+        }
     ]
 }

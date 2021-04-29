@@ -67,6 +67,30 @@ The client should call this function when it recieves this message, regardless o
 
 ---
 
+`sabotage [sabotage: ILightSabotage]`
+
+Sent to all clients when a sabotage begins.
+
+`sabotage` The sabotage info.
+
+---
+
+`endSabotage [id: string]`
+
+Sent to all clients when a sabotage is complete.
+
+`id` The ID of the sabotage.
+
+---
+
+`doSabotageFix [id: sabotageFixID]`
+
+Tell the client to begin a sabotage fix.
+
+`id`: ID of the sabotage fix.
+
+---
+
 **Meetings**
 
 `meetingCalled [emergency: boolean]`
@@ -160,6 +184,22 @@ Additionally, this message should also be sent if the client aborts the task for
 `taskComplete [data: {canceled: boolean}]`
 
 This message lets the server know that the client successfully QR code verified the task it was doing. Unless `canceled` = `true`. Then it means that the QR code verification failed.
+
+---
+
+`callSabotage [sabotageID: string]`
+
+Tells the server to call a sabotage. Only respected if the client is an imposter.
+
+`sabotageID` The ID of the sabotage on the map.
+
+---
+
+`sabotageFix [sabotageFixID: string]`
+
+Called when the client has completed a sabotage fix.
+
+`sabotageFixID`: The ID of the sabotage fix on the map. The server decides what to do with this.
 
 ---
 `startGame` 

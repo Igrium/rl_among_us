@@ -3,6 +3,7 @@ import ConnectionHandler from "./ConnectionHandler";
 import ILightPlayer from "../../../common/ILightPlayer";
 import { IMapFile, ITask } from "../../../common/IMapFile";
 import { MeetingManager } from "./MeetingManager";
+import { SabatogeManager } from "./sabotages/SabotageManager";
 
 export enum GameState {
     Gameplay,
@@ -14,12 +15,14 @@ export class GameManager {
     private connectionHandler: ConnectionHandler;
 
     public readonly meetingManager: MeetingManager;
+    public readonly sabotageManager: SabatogeManager;
 
     players: ILightPlayer[] = [];
     gameConfig: any = {};
     mapInfo: IMapFile = {
         mapImage: '',
-        tasks: []
+        tasks: [],
+        sabotages: []
     };
 
     /**
@@ -34,6 +37,7 @@ export class GameManager {
         this.connectionHandler = connectionHandler;
         this.initializeSocket()
         this.meetingManager = new MeetingManager(this, connectionHandler);
+        this.sabotageManager = new SabatogeManager(this, connectionHandler);
     }
     
     /**
@@ -90,6 +94,10 @@ export class GameManager {
      */
     completeTask(canceled: boolean) {
         this.connectionHandler.io.emit('taskComplete', {'canceled': canceled})
+    }
+
+    callSabotage(sabotageID: string) {
+        this.connectionHandler.io.emit('callSabotage', sabotageID);
     }
 
     protected startGame = (data: {roster: ILightPlayer[], gameConfig: any, mapInfo: IMapFile}) => {

@@ -4,6 +4,8 @@ export interface IMapFile {
 
     /** All the tasks in the map. */
     tasks: ITask[]
+    
+    sabotages: ISabotage[]
 }
 
 export interface ITask {
@@ -12,5 +14,24 @@ export interface ITask {
     coords: [number, number],
     icon: string,
     requireConfirmationScan: boolean,
+    params: any
+}
+
+/**
+ * Represents a map sabotage. Note: this is the sabotage itself, not the "fixing stations."
+ */
+export interface ISabotage {
+    id: string,
+    classID: string,
+    prettyName?: string,
+    fixLocations: ISabotageFix[],
+    timeout?: number
+}
+
+export interface ISabotageFix {
+    /** Cannot match a task ID */ 
+    id: string ,
+    classID: string,
+    coords: [number, number],
     params: any
 }

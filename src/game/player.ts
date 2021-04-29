@@ -1,3 +1,4 @@
+import e from "express";
 import { Socket } from "socket.io";
 import { gameServer } from "../gameServer";
 import { waitingRoom } from "../waitingRoom";
@@ -61,7 +62,7 @@ export class Player {
      * @param ejected Was the player ejected in a meeting?
      */
     kill(ejected: boolean) {
-
+        this.isAlive = false;
     }
 
     /**
@@ -119,6 +120,21 @@ export class Player {
             waitingRoom.updateRoster();
         }
     }
+
+    /**
+     * Finish performing a sabotage fix.
+     * @param id Sabotage fix ID.
+     */
+    sabotageFix(id: string) {
+        const activeSabotages = gameServer.activeSabotages;
+        for (let sabotageID of activeSabotages) {
+            const sabotage = gameServer.sabotages[sabotageID]
+            // Find sabotage that has sabotage fix.
+            if (sabotage.definition.fixLocations.find(sabotageFix => sabotageFix.id === id) !== undefined) {
+                sabotage.sabotageFix(id);
+            }
+        }
+    }
     
     /**
      * Initialize the player's socket connection.
@@ -129,7 +145,17 @@ export class Player {
         this.client.on('requestTask', (id) => {
             if (gameServer.isInGame()) {
                 console.log(`${this.name} requested task: ${id}.`)
-                this.beginTask(id);
+
+                if (gameServer.tasks[id]) this.beginTask(id);
+                // Sabotage fix
+                else {
+                    gameServer.activeSabotages.forEach((sabotageID) => {
+                        const sabotage = gameServer.sabotages[sabotageID];
+                        if (sabotage.definition.fixLocations.find(sabotageFix => sabotageFix.id === id) !== undefined) {
+                            this.client.emit('doSabotageFix', id);
+                        }
+                    })
+                }
             }
         }) 
         
@@ -151,6 +177,18 @@ export class Player {
         this.client.on('reportBody', () => {
             if (gameServer.isInGame()) {
                 gameServer.beginMeeting(false);
+            }
+        })
+
+        this.client.on('callSabotage', (id: string) => {
+            if (gameServer.isInGame() && this.isImposter) {
+                gameServer.sabotage(id);
+            }
+        })
+
+        this.client.on('sabotageFix', (id: string) => {
+            if (gameServer.isInGame() && gameServer.activeSabotages.length > 0) {
+                this.sabotageFix(id);
             }
         })
     }

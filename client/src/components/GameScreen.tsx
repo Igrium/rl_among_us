@@ -3,11 +3,13 @@ import Popup from 'reactjs-popup'
 import Gameplay from './gameplay/Gameplay'
 import { GameManager } from '../logic/GameManager'
 import TaskWindow from './gameplay/TaskWindow'
-import { ITask } from '../../../common/IMapFile'
+import { ISabotageFix, ITask } from '../../../common/IMapFile'
 import QRCodeScanner from './util/QRCodeScanner'
 
 import 'reactjs-popup/dist/index.css'
 import Meeting from './gameplay/meeting/Meeting'
+import { SabotageFixWindow } from './gameplay/SabotageFixWindow'
+import SabotageFix from './gameplay/sabotageFixes/SabotageFix'
 
 interface IProps {
     gameManager: GameManager;
@@ -16,13 +18,15 @@ interface IState {
     gameState: GameState,
     taskID: string,
     scannerOpen: boolean,
-    scannerMode: ScannerMode
+    scannerMode: ScannerMode,
+    sabotageFixID: string
 };
 
 export enum GameState {
     GAMEPLAY,
     MEETING,
-    TASK
+    TASK,
+    SABOTAGE_FIX
 }
 
 enum ScannerMode {
@@ -39,7 +43,8 @@ class GameScreen extends Component<IProps, IState> {
             gameState: GameState.GAMEPLAY,
             taskID: '',
             scannerOpen: false,
-            scannerMode: ScannerMode.SCAN_TASK
+            scannerMode: ScannerMode.SCAN_TASK,
+            sabotageFixID: ''
         }
     }
 
@@ -60,6 +65,10 @@ class GameScreen extends Component<IProps, IState> {
         if (!aborted && task.requireConfirmationScan) {
             this.setState({ scannerMode: ScannerMode.VERIFY_TASK, scannerOpen: true })
         }
+    }
+
+    private handleDoSabotageFix = (id: string) => {
+        this.setState({ gameState: GameState.SABOTAGE_FIX, sabotageFixID: id });
     }
 
     private handleScan = (value?: string) => {
@@ -92,12 +101,14 @@ class GameScreen extends Component<IProps, IState> {
     private handleResumePlay = () => {
         this.setState({ gameState: GameState.GAMEPLAY });
     }
+    
 
     private initListeners() {
         const gameManager = this.props.gameManager;
         gameManager.onDoTask(this.handleBeginTask);
         gameManager.meetingManager.onMeetingCalled(this.handleBeginMeeting);
         gameManager.meetingManager.onResumePlay(this.handleResumePlay);
+        gameManager.sabotageManager.onDoSabotageFix(this.handleDoSabotageFix);
     }
 
     private getTaskWindow() {
@@ -105,6 +116,16 @@ class GameScreen extends Component<IProps, IState> {
         const gameManager = this.props.gameManager;
         const taskWindow = <TaskWindow gameManager={gameManager} task={gameManager.getTaskSafe(taskID)} onFinish={this.handleTaskFinish} />
         return <Popup modal defaultOpen closeOnDocumentClick={false} closeOnEscape={false} contentStyle={{width: 'max-content'}}>{taskWindow}</Popup>;
+    }
+
+    private getSabotageFixWindow() {
+        const { sabotageFixID } = this.state;
+        const { gameManager } = this.props;
+        const sabotageFixWindow = <SabotageFixWindow gameManager={gameManager} sabotageFix={gameManager.sabotageManager.getSabotageFixSafe(sabotageFixID)} onFinish={() => {
+            this.setState({ gameState: GameState.GAMEPLAY });
+        }} />
+
+        return <Popup modal defaultOpen closeOnDocumentClick={false} closeOnEscape={false} contentStyle={{width: 'max-content'}}>{sabotageFixWindow}</Popup>
     }
 
     private getScanWindow() {
@@ -134,6 +155,7 @@ class GameScreen extends Component<IProps, IState> {
                 {/* Render tasks */}
                 {gameState === GameState.TASK ? this.getTaskWindow() : null}
                 {gameState === GameState.MEETING ? this.getMeetingWindow() : null}
+                {gameState === GameState.SABOTAGE_FIX ? this.getSabotageFixWindow() : null}
                 {scannerOpen ? this.getScanWindow() : null}
             </div>
         )

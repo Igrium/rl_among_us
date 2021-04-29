@@ -15,6 +15,8 @@ import { Meeting } from "./game/meeting";
 import { fieldComputerManifest } from "./game/gameField/fieldComputerManifest";
 import { EventEmitter } from "events";
 import { IMapFile } from "../common/IMapFile";
+import { sabotageManifest } from "./game/sabotage/sabotageManifest";
+import { BaseSabotage } from "./game/sabotage/baseSabotage";
 
 const config = require('config');
 
@@ -29,11 +31,18 @@ export module gameServer {
     
     export const gameConfig = config.get('game');
     export const mapFile = gameUtils.loadMapFile(gameConfig.map);
+
     /** A library of all the tasks in the map. <ID, Task object> */
     export const tasks: Record<string, BaseTask> = taskManifest.loadTasks(mapFile.tasks);
+
+    /** A library of all the sabotages in the map. */
+    export const sabotages = sabotageManifest.loadSabotages(mapFile.sabotages);
     
     /** The object for the current meeting; undefined if we're not in a meeting. */
     export let currentMeeting: Meeting | undefined;
+    
+    /** The IDs of all the active sabotages. Usually only one at a time.  */
+    export let activeSabotages: string[] = [];
 
     let inGame: boolean = false;
 
@@ -43,9 +52,6 @@ export module gameServer {
     let taskBar: number = 0;
 
     let emitter = new EventEmitter();
-
-    // Listeners
-
 
 
     /**
@@ -84,8 +90,8 @@ export module gameServer {
         for (let key in players) {
             let player = players[key];
             let tasks = gameUtils.assignTasks(mapFile.tasks, 5);
-            player.startGame(roster[player.name].isImposter, tasks); // TODO: choose tasks.
-            player.client.emit('startGame', args) // TODO: implement gameInfo and mapInfo.
+            player.startGame(roster[player.name].isImposter, tasks);
+            player.client.emit('startGame', args);
             player.updateTasks();
         }
         updateTaskBar();
@@ -213,9 +219,34 @@ export module gameServer {
     export function killPlayer(playerName: string, ejected: boolean) {
         let player = players[playerName];
         if (player.isAlive) {
-            player.isAlive = false;
+            player.kill(ejected)
 
             gameUtils.announce('updateGameRoster', Object.values(gameUtils.generateLightRoster(players)));
+        }
+    }
+
+    // Keep track of sabotages.
+    Object.values(sabotages).forEach((s) => {
+        s.onBegin(() => {
+            activeSabotages.push(s.id);
+            emitter.emit('sabotage', s);
+        })
+
+        s.onEnd(() => {
+            const index = activeSabotages.indexOf(s.id);
+            if (index > -1) {
+                activeSabotages.splice(index, 1);
+            }
+            emitter.emit('endSabotage', s);
+        })
+    })
+
+    export function sabotage(id: string) {
+        if (id in sabotages) {
+            let sabotage = sabotages[id];
+            sabotage.beginSabotage();
+        } else {
+            console.warn(`Sabotage ${id} does not exist in the map!`);
         }
     }
     
@@ -244,6 +275,14 @@ export module gameServer {
 
     export function onEndMeeting(listener: (meeting: Meeting) => void): void {
         emitter.on('endMeeting', listener);
+    }
+
+    export function onSabotage(listener: (sabotage: BaseSabotage) => void) {
+        emitter.on('sabotage', listener);
+    }
+
+    export function onEndSabotage(listener: (sabotage: BaseSabotage) => void) {
+        emitter.on('endSabotage', listener);
     }
 }
 

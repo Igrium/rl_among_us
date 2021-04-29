@@ -117,6 +117,7 @@ export module gameServer {
         inGame = false;
 
         emitter.emit('endGame', impostersWin);
+        waitingRoom.updateRoster();
     }
 
     /**

@@ -120,6 +120,21 @@ export class Player {
             waitingRoom.updateRoster();
         }
     }
+
+    /**
+     * Finish performing a sabotage fix.
+     * @param id Sabotage fix ID.
+     */
+    sabotageFix(id: string) {
+        const activeSabotages = gameServer.activeSabotages;
+        for (let sabotageID of activeSabotages) {
+            const sabotage = gameServer.sabotages[sabotageID]
+            // Find sabotage that has sabotage fix.
+            if (sabotage.definition.fixLocations.find(sabotageFix => sabotageFix.id === id) !== undefined) {
+                sabotage.sabotageFix(id);
+            }
+        }
+    }
     
     /**
      * Initialize the player's socket connection.
@@ -168,6 +183,12 @@ export class Player {
         this.client.on('callSabotage', (id: string) => {
             if (gameServer.isInGame() && this.isImposter) {
                 gameServer.sabotage(id);
+            }
+        })
+
+        this.client.on('sabotageFix', (id: string) => {
+            if (gameServer.isInGame() && gameServer.activeSabotages.length > 0) {
+                this.sabotageFix(id);
             }
         })
     }

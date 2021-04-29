@@ -18,11 +18,21 @@ export abstract class BaseSabotage {
     /** The sabotage's definition in the map file. */
     public readonly definition: ISabotage;
 
+    /**
+     * A record of all the sabotage fixes and whether they have been fixed.
+     */
+    public readonly fixed: Record<string, boolean>;
+
     private emitter = new EventEmitter();
 
     constructor(definition: ISabotage) {
         this.id = definition.id;
         this.definition = definition;
+        this.fixed = {}
+
+        this.definition.fixLocations.forEach(sabotageFix => {
+            this.fixed[sabotageFix.id] = false;
+        })
     }
 
     /**
@@ -52,6 +62,24 @@ export abstract class BaseSabotage {
     abstract isCritical(): boolean;
 
     /**
+     * Called when the client reports it has performed a sabotage fix belonging to this sabotage.
+     */
+    sabotageFix(id: string) {
+        this.fixed[id] = true;
+        this.checkFixes();
+    }
+
+    protected checkFixes() {
+        Object.keys(this.fixed).forEach(id => {
+            if (this.fixed[id] == false) {
+                return;
+            }
+        })
+
+        this.endSabotage();
+    }
+
+    /**
      * Get an ILightSabotage representation of this sabotage.
      */
     getLightSabotage(): ILightSabotage {
@@ -61,4 +89,5 @@ export abstract class BaseSabotage {
             isCritical: this.isCritical()
         }
     }
+    
 }

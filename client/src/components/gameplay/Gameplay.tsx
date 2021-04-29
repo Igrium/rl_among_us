@@ -67,6 +67,9 @@ export class Gameplay extends Component<IProps, IState> {
     }  
 
     render() {
+
+        const { localPlayer } = this.props.gameManager;
+
         return (
             <div style={{backgroundColor: this.state.criticalSabotage ? 'red': 'white'}}>
                 <h1>Gameplay Screen</h1>
@@ -76,9 +79,12 @@ export class Gameplay extends Component<IProps, IState> {
                 <button onClick={this.handleRequestTask}>Scan Task</button>
 
                 {/* Report button */}
-                {this.props.gameManager.localPlayer.isAlive ? this.reportButton() : null}
+                {localPlayer.isAlive ? this.reportButton() : null}
 
-                {this.props.gameManager.localPlayer.isImposter ? this.sabotageButton() : null}
+                {localPlayer.isImposter ? this.sabotageButton() : null}
+
+                {(!localPlayer.isImposter && localPlayer.isAlive) ? this.killedButton() : null}
+                
                 
             </div>
         )
@@ -115,13 +121,33 @@ export class Gameplay extends Component<IProps, IState> {
 
         return (
             <Popup trigger={<button>Sabotage</button>} modal>
-                <PopoutList entries={names} onSelected={onSelect}/>
+                {(close: () => void) => (
+                    <PopoutList entries={names} onSelected={value => { onSelect(value); close(); }}/>
+                )} 
             </Popup>
         )
     }
     
     callSabotage = (sabotage: ISabotage) => {
         this.props.gameManager.callSabotage(sabotage.id);
+    }
+
+    killedButton() {
+        return (
+            <Popup trigger={<button>I'm Dead</button>} modal>
+            {(close: () => void) => (
+                <div>
+                    <p>Are you sure you want to report yourself as dead?</p>
+                    <button onClick={() => { this.handleReportKilled(); close() }}>Yes</button>
+                    <button onClick={close}>No</button>
+                </div>
+            )}
+            </Popup>
+        )
+    }
+
+    handleReportKilled = () => {
+        this.props.gameManager.reportKilled();
     }
 }
 

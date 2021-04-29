@@ -106,12 +106,18 @@ export module gameServer {
      * @param impostersWin Did the imposters win?
      */
     export function endGame(impostersWin: boolean) {
+        if (impostersWin) console.log("Imposters win!");
+        else console.log("Crewmates win!");
+
         for (let key in players) {
             let player = players[key];
             player.endGame(impostersWin);
             player.client.emit('endGame', {impostersWin: impostersWin});
         }
-        
+        inGame = false;
+
+        emitter.emit('endGame', impostersWin);
+        waitingRoom.updateRoster();
     }
 
     /**
@@ -222,6 +228,7 @@ export module gameServer {
             player.kill(ejected)
 
             gameUtils.announce('updateGameRoster', Object.values(gameUtils.generateLightRoster(players)));
+            checkWin();
         }
     }
 
@@ -248,6 +255,25 @@ export module gameServer {
         } else {
             console.warn(`Sabotage ${id} does not exist in the map!`);
         }
+    }
+
+    /**
+     * Check to see if someone won.
+     */
+    export function checkWin() {
+        let numImposters = 0;
+        let numCrewmates = 0;
+
+        Object.values(players).forEach(player => {
+            if (player.isAlive) {
+                if (player.isImposter) { numImposters++ }
+                else { numCrewmates++ }
+            }
+        })
+        const winState = gameUtils.checkWinState(numImposters, numCrewmates);
+
+        if (winState === gameUtils.WinState.IMPOSTERS) { endGame(true); }
+        else if (winState === gameUtils.WinState.CREWMATES) { endGame(false); }
     }
     
     /**
@@ -283,6 +309,10 @@ export module gameServer {
 
     export function onEndSabotage(listener: (sabotage: BaseSabotage) => void) {
         emitter.on('endSabotage', listener);
+    }
+
+    export function onEndGame(listener: (impostersWin: boolean) => void) {
+        emitter.on('endGame', listener);
     }
 }
 

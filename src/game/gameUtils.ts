@@ -85,4 +85,20 @@ export module gameUtils {
         return roster;
     }
     
+    export enum WinState {
+        NO_WIN,
+        IMPOSTERS,
+        CREWMATES
+    }
+
+    export function checkWinState(numImposters: number, numCrewmates: number) {
+        if (numImposters === 0) {
+            return WinState.CREWMATES;
+        } else if (numImposters >= numCrewmates) {
+            return WinState.IMPOSTERS;
+        } else {
+            return WinState.NO_WIN;
+        }
+    }
+    
 }

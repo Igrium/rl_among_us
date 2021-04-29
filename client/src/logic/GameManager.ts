@@ -100,6 +100,10 @@ export class GameManager {
         this.connectionHandler.io.emit('callSabotage', sabotageID);
     }
 
+    reportKilled() {
+        this.connectionHandler.io.emit('killed');
+    }
+
     protected startGame = (data: {roster: ILightPlayer[], gameConfig: any, mapInfo: IMapFile}) => {
         console.log('Starting game...')
         const { roster, gameConfig, mapInfo } = data;
@@ -141,12 +145,20 @@ export class GameManager {
         }
     }
 
+    protected endGame = (data: { impostersWin: boolean }) => {
+        if (data.impostersWin) console.log("Imposters win!");
+        else console.log("Crewmates win!");
+
+        this.em.emit('endGame', data.impostersWin);
+    }
+
     protected initializeSocket() {
         this.connectionHandler.io.on('startGame', this.startGame);
         this.connectionHandler.io.on('updateTasks', this.updateTasks);
         this.connectionHandler.io.on('doTask', this.doTask);
         this.connectionHandler.io.on('updateTaskBar', this.updateTaskBar);
-        this.connectionHandler.io.on('updateGameRoster', this.updateGameRoster)
+        this.connectionHandler.io.on('updateGameRoster', this.updateGameRoster);
+        this.connectionHandler.io.on('endGame', this.endGame);
     }
 
     // EVENTS
@@ -196,5 +208,9 @@ export class GameManager {
      */
     onLocalPlayerKilled(listener: () => void) {
         this.em.on('localPlayerKilled', listener);
+    }
+
+    onEndGame(listener: (impostersWin: boolean) => void) {
+        this.em.on('endGame', listener);
     }
 }

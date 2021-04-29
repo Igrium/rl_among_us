@@ -13,6 +13,7 @@ import SabotageFix from './gameplay/sabotageFixes/SabotageFix'
 
 interface IProps {
     gameManager: GameManager;
+    onGameFinished?: (impostersWin: boolean) => void;
 };
 interface IState {
     gameState: GameState,
@@ -101,6 +102,12 @@ class GameScreen extends Component<IProps, IState> {
     private handleResumePlay = () => {
         this.setState({ gameState: GameState.GAMEPLAY });
     }
+
+    private handleGameEnd = (impostersWin: boolean) => {
+        if (this.props.onGameFinished) {
+            this.props.onGameFinished(impostersWin);
+        }
+    }
     
 
     private initListeners() {
@@ -109,6 +116,7 @@ class GameScreen extends Component<IProps, IState> {
         gameManager.meetingManager.onMeetingCalled(this.handleBeginMeeting);
         gameManager.meetingManager.onResumePlay(this.handleResumePlay);
         gameManager.sabotageManager.onDoSabotageFix(this.handleDoSabotageFix);
+        gameManager.onEndGame(this.handleGameEnd);
     }
 
     private getTaskWindow() {
